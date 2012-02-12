@@ -7,11 +7,11 @@
 <script type="text/javascript">
 
 function setupPicker(){
-	var mypicker = new SimplePicker("huewell","slwell","resultwell","rgbval");
+	var mypicker = new SimplePicker("huewell","slwell","resultwell");
 	mypicker.setRGBRangeControls("red","green","blue");
 	mypicker.setHSLRangeControls("hue","saturation","lightness");
-	mypicker.setHSLField("hslval");
-	mypicker.setRGBField("rgbval");
+	mypicker.setHSLInput("hslval");
+	mypicker.setRGBInput("rgbval");
 	
 }
 
@@ -20,16 +20,18 @@ function setupPicker(){
 <body onload="setupPicker();">
 
 
-<canvas id="huewell" class="huewell" width="200" height="20">></canvas><p />
-<canvas id="slwell" class="slwell" width="400" height="400"></canvas><p />
-<div class="resultwell" id="resultwell"> </div> 
-RGB: <input type="text" id="rgbval" value = "unknown"/> HSL:<input type="text" id="hslval" value = "unknown"/><br />
-Red: <input type="range" min = "0" max ="255" step="1" id="red"  /><br />
-Green: <input type="range" min = "0" max ="255" step="1" id="green" /><br />
-Blue: <input type="range" min = "0" max ="255" step="1" id="blue" /><br />
-Hue: <input type="range" min = "0" max ="360" step="1" id="hue"  /><br />
-Saturation: <input type="range" min = "0.0" max ="1.0" step="0.01" id="saturation" /><br />
-Lightness: <input type="range" min = "0.0" max ="1.0" step="0.01" id="lightness" /><br />
+	<canvas id="huewell" class="huewell" width="200" height="20">></canvas><p />
+	<canvas id="slwell" class="slwell" width="400" height="400"></canvas><p />
+	<div class="resultwell" id="resultwell"> </div> 
+
+	Red: <input type="range" min = "0" max ="255" step="1" id="red"  /><br />
+	Green: <input type="range" min = "0" max ="255" step="1" id="green" /><br />
+	Blue: <input type="range" min = "0" max ="255" step="1" id="blue" /><br />
+	Hue: <input type="range" min = "0" max ="360" step="1" id="hue"  /><br />
+	Saturation: <input type="range" min = "0.0" max ="1.0" step="0.01" id="saturation" /><br />
+	Lightness: <input type="range" min = "0.0" max ="1.0" step="0.01" id="lightness" /><br />
+	
+	RGB: <input type="text" id="rgbval" value = "unknown"/> HSL:<input type="text" id="hslval" value = "unknown"/><br />
 
 </body>
 </html>
