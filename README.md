@@ -19,9 +19,9 @@ HTML5 range controls (sliders) can also be specified if desired.
 	</script>
 
 	<body onload="setupPicker();">
-		<canvas id="huewell" class="huewell" width="200" height="20">></canvas><p />
-		<canvas id="slwell" class="slwell" width="400" height="400"></canvas><p />
-		<div class="resultwell" id="resultwell"> </div>
+		<canvas id="huewell" width="200" height="20">></canvas><p />
+		<canvas id="slwell" width="400" height="400"></canvas><p />
+		<div id="resultwell"> </div>
 	</body>
 
 #Usage with range ("slider") controls:
@@ -42,9 +42,9 @@ HTML5 range controls (sliders) can also be specified if desired.
 	<body onload="setupPicker();">
 
 
-		<canvas id="huewell" class="huewell" width="200" height="20">></canvas><p />
-		<canvas id="slwell" class="slwell" width="400" height="400"></canvas><p />
-		<div class="resultwell" id="resultwell"> </div> 
+		<canvas id="huewell" width="200" height="20">></canvas><p />
+		<canvas id="slwell" width="400" height="400"></canvas><p />
+		<div id="resultwell"> </div> 
 
 		Red: <input type="range" min = "0" max ="255" step="1" id="red"  /><br />
 		Green: <input type="range" min = "0" max ="255" step="1" id="green" /><br />
@@ -76,9 +76,9 @@ HTML5 range controls (sliders) can also be specified if desired.
 	<body onload="setupPicker();">
 
 
-		<canvas id="huewell" class="huewell" width="200" height="20">></canvas><p />
-		<canvas id="slwell" class="slwell" width="400" height="400"></canvas><p />
-		<div class="resultwell" id="resultwell"> </div> 
+		<canvas id="huewell"  width="200" height="20">></canvas><p />
+		<canvas id="slwell" width="400" height="400"></canvas><p />
+		<div id="resultwell"> </div> 
 
 		Red: <input type="range" min = "0" max ="255" step="1" id="red"  /><br />
 		Green: <input type="range" min = "0" max ="255" step="1" id="green" /><br />
@@ -91,7 +91,25 @@ HTML5 range controls (sliders) can also be specified if desired.
 
 	</body>
 
+#Styling
+
+You're free to apply any CSS styling that fits into your application's design (but see the note below about the size of the canvas
+elements)
+
+#Caveats
+
+You should set the width and height for the canvas elements explicitly in the code, rather than relying on CSS (otherwise you may
+run into scaling issues).
+
+There are some unavoidable issues relating to conversion between different color spaces. RGB components are quantized (integers between 0-255 inclusive),
+while HSL components are continuous (0-360 degrees for hue, 0.0-1.0 for saturation and lightness). This can produce small rounding errors.
+
+In addition, for certain values of lightness (0% and  100%), hue is essentially meaningless. 0% is black and 100% lightness is white, regardless of the hue. That means that more than one setting of for HSL will correspond to the same screen color, and may produce a hue "jump" under certain conditions.
+
+
 #API:
+
+The example code above should cover most common usage patterns, but the API has other methods that may be useful if you need more control.
 
 SimplePicker(hueElementId,satvalElementId,wellElementId) 
 	Constructs a new SimplePicker object. 
