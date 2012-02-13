@@ -8,7 +8,7 @@ Minimal usage requires two HTML 5 Canvas elements (one for hue, one for saturati
 Text fields for displaying the chosen color in RGB and HSL format, and
 HTML5 range controls (sliders) can also be specified if desired.
 
-See a <a href="http://contraterrene.com/snippets/SimplePicker/Demo.html">live demo here</a>.
+See a <a href="http://contraterrene.com/snippets/SimplePicker/Example.html">live demo here</a>.
 
 #Basic usage:
 
