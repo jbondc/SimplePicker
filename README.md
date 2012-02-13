@@ -21,7 +21,7 @@ HTML5 range controls (sliders) can also be specified if desired.
 	<body onload="setupPicker();">
 		<canvas id="huewell" width="200" height="20">></canvas><p />
 		<canvas id="slwell" width="400" height="400"></canvas><p />
-		<div id="resultwell"> </div>
+		<div id="resultwell" width="50" height="50"> </div>
 	</body>
 
 #Usage with HTML5 range ("slider") controls:
@@ -44,7 +44,7 @@ HTML5 range controls (sliders) can also be specified if desired.
 
 		<canvas id="huewell" width="200" height="20">></canvas><p />
 		<canvas id="slwell" width="400" height="400"></canvas><p />
-		<div id="resultwell"> </div> 
+		<div id="resultwell" width="50" height="50"> </div> 
 
 		Red: <input type="range" min = "0" max ="255" step="1" id="red"  /><br />
 		Green: <input type="range" min = "0" max ="255" step="1" id="green" /><br />
@@ -78,7 +78,7 @@ HTML5 range controls (sliders) can also be specified if desired.
 
 		<canvas id="huewell"  width="200" height="20">></canvas><p />
 		<canvas id="slwell" width="400" height="400"></canvas><p />
-		<div id="resultwell"> </div> 
+		<div id="resultwell" width="50" height="50"> </div> 
 
 		Red: <input type="range" min = "0" max ="255" step="1" id="red"  /><br />
 		Green: <input type="range" min = "0" max ="255" step="1" id="green" /><br />
@@ -109,65 +109,63 @@ In addition, for certain values of lightness (0% and  100%), hue is essentially 
 
 #API:
 
-The example code above should cover most common usage patterns, but the API has other methods that may be useful if you need more control.
-
-SimplePicker(hueElementId,satvalElementId,wellElementId) 
+**SimplePicker(hueElementId,satvalElementId,wellElementId)**
 
 Constructs a new SimplePicker object. 
 
 Parameters: 
 
-hueElementId, satvalElementId: should be the ids of HTML5 Canvas elements. 
+*hueElementId, satvalElementId* should be the ids of HTML5 Canvas elements. 
 
-wellElementId: should be the id of  any HTML element which supports the backgroundColor (JavaScript)/background-color (CSS) property.
+*wellElementId* should be the id of any HTML element which supports the backgroundColor (JavaScript)/background-color (CSS) property.
 	
 		
 		
-SimplePicker.setRGBInput(rgbInputId)
+**SimplePicker.setRGBInput(rgbInputId)**
 
 Binds a text input field to the current color. It will be updated automatically as the color is changed.
 
 
 Parameter:
 
-rgbInputId : should be the id of an HTML text input field
+*rgbInputId* should be the id of an HTML text input field
 
 	
 		
-SimplePicker.setHSLInput(hslInputId)
+**SimplePicker.setHSLInput(hslInputId)**
 
 Binds a text input field to the current hue, saturation and lightness. It will be updated automatically as the color is changed.
 
 Parameter:
 
-hslInputId : should be the id of an HTML text input field
+*hslInputId*  should be the id of an HTML text input field
 		
 		
 
-SimplePicker.setRGBRangeControls(redRangeId,greenRangeId,blueRangeId)
+**SimplePicker.setRGBRangeControls(redRangeId,greenRangeId,blueRangeId)**
 
 Binds HTML5 range controls ("sliders") to the current RGB values.
 
 Parameters:
 
-redRangeId,greenRangeId,blueRangeId should be HTML range controls with min 0, max 255, and step 1
+redRangeId,greenRangeId,blueRangeId should be the ids of HTML5 range controls with min 0, max 255, and step 1.
 		
 		
 
-SimplePicker.setHSLRangeControls(hueRangeId,saturationRangeId,lightnessRangeId)
+**SimplePicker.setHSLRangeControls(hueRangeId,saturationRangeId,lightnessRangeId)**
 
 Binds HTML5 range controls ("sliders") to the current HSL values.
 
 Parameters:
 
-hueRangeId,saturationRangeId,lightnessRangeId should be HTML range controls. hueRangeId should have min 0, max 360, and a step
+*hueRangeId,saturationRangeId,lightnessRangeId* should be the ids of HTML5 range controls. *hueRangeId* should have min 0, max 360, and a step
 appropriate for the precision you need (1 is a good starting point).
 
-saturationRangeId and lightnessRangeId should have min 0, max 1.0 and an appropriate step (0.01 is a good starting point)
+*saturationRangeId* and *lightnessRangeId* should have min 0, max 1.0 and an appropriate step (0.01 is a good starting point)
 	
 		
 		
-SimplePicker.getRGBString()
+**SimplePicker.getRGBString()**
 
 Returns the current RGB value as an HTML hex color code (e.g. #FF00FF)
 
@@ -177,7 +175,7 @@ none
 
 	
 	
-SimplePicker.getRGB()
+**SimplePicker.getRGB()**
 
 Returns the current RGB values as a three-element JavaScript array (each in the range [0,255]).
 
@@ -187,7 +185,7 @@ none
 	
 		
 		
-SimplePicker.getHSL()
+**SimplePicker.getHSL()**
 
 Returns the current HSL values as a three-element JavaScript array (hue in the range [0,360], saturation and lightness in the range [0,1.0])
 
@@ -197,85 +195,85 @@ none
 		
 		
 		
-SimplePicker.setRGB(red,green,blue)
+**SimplePicker.setRGB(red,green,blue)**
 
 Sets the current components in RGB color space. 
 
 Parameters:
 
-red,green,blue are the new RGB values in the range 0-255
+*red,green,blue* are the new RGB values in the range 0-255
 	
 		
 		
-SimplePickersetRed(red)
+**SimplePicker.setRed(red)**
 
 Sets the current red value in RGB color space.
 
 Parameters:
 
-red: the new red value (range 0-255)
+*red*: the new red value (range 0-255)
 	
 		
 
-SimplePickersetGreen(green)
+**SimplePicker.setGreen(green)**
 
 Sets the current green value in RGB color space.
 
 Parameters:
 
-green: the new green value (range 0-255)
+*green*: the new green value (range 0-255)
 
 	
 
-SimplePickersetBlue(blue)
+**SimplePicker.setBlue(blue)**
 
 Sets the current blue value in RGB color space.
 
 Parameters:
 
-blue: the new blue value (range 0-255)
+*blue*: the new blue value (range 0-255)
 
 		
 
-SimplePicker.setHSL(hue,saturation,lightness)
+**SimplePicker.setHSL(hue,saturation,lightness)**
 
 Sets the current components in HSL color space.
 
 Parameters:
 
-hue: the new hue (range 0-360)
+*hue*: the new hue (range 0-360)
 
-saturation: the new saturation (range 0.0-1.0)
+*saturation*: the new saturation (range 0.0-1.0)
 
-lightness: the new lightness (range 0.0-1.0)
+*lightness*: the new lightness (range 0.0-1.0)
 
 		
-SimplePicker.setHue(hue)
+**SimplePicker.setHue(hue)**
 
 Sets the current hue in HSL color space.
 
 Parameters: 
 
-hue: the new hue (range 0-360)
+*hue*: the new hue (range 0-360)
 	
 		
 		
-SimplePicker.setSaturation(saturation)
+**SimplePicker.setSaturation(saturation)**
 
 Sets the current saturation in HSL color space.
 	
 Parameters: 
 
-saturation: the new saturation (range 0.0-1.0)
+*saturation*: the new saturation (range 0.0-1.0)
 		
 		
 
-SimplePicker.setLightness(lightness)
+**SimplePicker.setLightness(lightness)**
 
 Sets the current lightness in HSL color space.
 
 Parameters:
 
-lightness: the new lightness (range 0.0-1.0)
+*lightness*: the new lightness (range 0.0-1.0)
 
 		
