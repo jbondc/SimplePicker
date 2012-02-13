@@ -1,38 +1,117 @@
 <html>
 <head>
-<link rel="stylesheet" type="text/css" href="mypicker.css" />
+	<link rel="stylesheet" type="text/css" href="Example.css" />
 
-<script src="SimplePicker.js"></script>
+	<script src="SimplePicker.js"></script>
 
-<script type="text/javascript">
+	<script type="text/javascript">
 
-function setupPicker(){
-	var mypicker = new SimplePicker("huewell","slwell","resultwell");
-	mypicker.setRGBRangeControls("red","green","blue");
-	mypicker.setHSLRangeControls("hue","saturation","lightness");
-	mypicker.setHSLInput("hslval");
-	mypicker.setRGBInput("rgbval");
-	
-}
+	function setupPicker(){
+		// Set up basic picker.
+		var basicpicker = new SimplePicker("basichuewell","basicslwell","basicresultwell");
 
-</script>
+		// Set up picker with range controls.
+		var rangepicker = new SimplePicker("rangehuewell","rangeslwell","rangeresultwell");
+		rangepicker.setRGBRangeControls("rangered","rangegreen","rangeblue");
+		rangepicker.setHSLRangeControls("rangehue","rangesaturation","rangelightness");
 
-<body onload="setupPicker();">
+		// Set up picker with range controls and text input fields.
+		var rangetextpicker = new SimplePicker("rangetexthuewell","rangetextslwell","rangetextresultwell");
+		rangetextpicker.setRGBRangeControls("rangetextred","rangetextgreen","rangetextblue");
+		rangetextpicker.setHSLRangeControls("rangetexthue","rangetextsaturation","rangetextlightness");
+		rangetextpicker.setHSLInput("rangetexthslval");
+		rangetextpicker.setRGBInput("rangetextrgbval");
+
+		// Set up picker with CSS styling.
+		var styledpicker = new SimplePicker("styledhuewell","styledslwell","styledresultwell");
+		styledpicker.setRGBRangeControls("styledred","styledgreen","styledblue");
+		styledpicker.setHSLRangeControls("styledhue","styledsaturation","styledlightness");
+		styledpicker.setHSLInput("styledhslval");
+		styledpicker.setRGBInput("styledrgbval");
+
+	}
+
+	</script>
+
+	<body onload="setupPicker();">
+		(click or tap to set colors)
 
 
-	<canvas id="huewell" class="huewell" width="200" height="20">></canvas><p />
-	<canvas id="slwell" class="slwell" width="400" height="400"></canvas><p />
-	<div class="resultwell" id="resultwell"> </div> 
+		<div class="picex">
+			<h1>Basic, unstyled picker</h1>
 
-	Red: <input type="range" min = "0" max ="255" step="1" id="red"  /><br />
-	Green: <input type="range" min = "0" max ="255" step="1" id="green" /><br />
-	Blue: <input type="range" min = "0" max ="255" step="1" id="blue" /><br />
-	Hue: <input type="range" min = "0" max ="360" step="1" id="hue"  /><br />
-	Saturation: <input type="range" min = "0.0" max ="1.0" step="0.01" id="saturation" /><br />
-	Lightness: <input type="range" min = "0.0" max ="1.0" step="0.01" id="lightness" /><br />
-	
-	RGB: <input type="text" id="rgbval" value = "unknown"/> HSL:<input type="text" id="hslval" value = "unknown"/><br />
+			<canvas id="basichuewell" width="200" height="20">></canvas><p />
+			<canvas id="basicslwell" width="200" height="200"></canvas><p />
+			<div class="resultwell" id="basicresultwell">&nbsp</div>
+		</div>
 
+
+		<div class="picex">
+			<h1>Unstyled picker with HTML5 range controls ("sliders")</h1>
+			<canvas id="rangehuewell" width="200" height="20">></canvas><p />
+			<canvas id="rangeslwell" width="200" height="200"></canvas><p />
+			<div class="resultwell" id="rangeresultwell"> </div> 
+
+			Red: <input type="range" min = "0" max ="255" step="1" id="rangered"  /><br />
+			Green: <input type="range" min = "0" max ="255" step="1" id="rangegreen" /><br />
+			Blue: <input type="range" min = "0" max ="255" step="1" id="rangeblue" /><br />
+			Hue: <input type="range" min = "0" max ="360" step="1" id="rangehue"  /><br />
+			Saturation: <input type="range" min = "0.0" max ="1.0" step="0.01" id="rangesaturation" /><br />
+			Lightness: <input type="range" min = "0.0" max ="1.0" step="0.01" id="rangelightness" /><br />
+		</div>
+	</div>
+
+
+	<div class="picex">
+		<h1>Unstyled picker with range controls and text fields </h1>
+		<canvas id="rangetexthuewell" class="huewell" width="200" height="20">></canvas><p />
+		<canvas id="rangetextslwell" class="slwell" width="200" height="200"></canvas><p />
+		<div class="resultwell" id="rangetextresultwell"> </div> 
+
+		Red: <input type="range" min = "0" max ="255" step="1" id="rangetextred"  /><br />
+		Green: <input type="range" min = "0" max ="255" step="1" id="rangetextgreen" /><br />
+		Blue: <input type="range" min = "0" max ="255" step="1" id="rangetextblue" /><br />
+		Hue: <input type="range" min = "0" max ="360" step="1" id="rangetexthue"  /><br />
+		Saturation: <input type="range" min = "0.0" max ="1.0" step="0.01" id="rangetextsaturation" /><br />
+		Lightness: <input type="range" min = "0.0" max ="1.0" step="0.01" id="rangetextlightness" /><br />
+
+		RGB: <input type="text" id="rangetextrgbval" value = "unknown"/> HSL: <input type="text" id="rangetexthslval" value = "unknown"/><br />
+	</div>
+
+
+
+	<div class="picex">	
+		<h1>Picker with full CSS styling </h1>
+		<div class="pickerwells">
+			<div class="huecontainer">
+				<canvas class="huestyle" id="styledhuewell" class="huewell" width="200" height="20">></canvas><p />
+			</div>
+			<div class="slcontainer">
+				<canvas class="slstyle" id="styledslwell" class="slwell" width="200" height="200"></canvas><p />
+			</div>
+		</div>
+
+
+		<div class="sliderbank">
+
+			<span class="sliders">
+				<div class="rgbsliders">
+					<span class="sliderlabel">Red:</span> <input type="range" min = "0" max ="255" step="1" id="styledred"  class="rangestyle" /><br />
+					<span class="sliderlabel">Green:</span> <input type="range" min = "0" max ="255" step="1" id="styledgreen" class="rangestyle" /><br />
+					<span class="sliderlabel">Blue:</span> <input type="range" min = "0" max ="255" step="1" id="styledblue" class="rangestyle" /><br />
+				</div>
+				<div class="hsvsliders">
+					<span class="sliderlabel">Hue:</span> <input type="range" min = "0" max ="360" step="1" id="styledhue" class="rangestyle"  /><br />
+					<span class="sliderlabel">Saturation:</span> <input type="range" min = "0.0" max ="1.0" step="0.01" id="styledsaturation" class="rangestyle" /><br />
+					<span class="sliderlabel">Lightness:</span><input type="range" min = "0.0" max ="1.0" step="0.01" id="styledlightness" class="rangestyle" /><br />
+				</div>
+			</span>
+			<div class="styledresultwell" id="styledresultwell">&nbsp; </div> 
+		</div>
+		<div class="textvalues">
+			RGB: <input class="rgbstyle" type="text" id="styledrgbval" value = "unknown"/> HSL: <input class="hslstyle" type="text" id="styledhslval" value = "unknown"/><br />
+		</div>
+	</div>
 </body>
 </html>
 

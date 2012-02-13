@@ -1,3 +1,7 @@
+/*
+* SimplePicker.js, copyright 2012 by Contraterrene eLearning Group, LLC
+* Released under the terms of the MIT License
+*/
 
 function SimplePicker(hueElementId,satvalElementId,wellElementId){
 	this.hueElement = document.getElementById(hueElementId);
@@ -9,8 +13,6 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 	}
 	this.satvalElement = document.getElementById(satvalElementId);
 	this.wellElement = document.getElementById(wellElementId);
-	//	this.chosenX = this.satvalElement.offsetWidth - 1; // Set to max saturation and brightness.
-	//	this.chosenY = 0;
 	this.hue = 0;
 	this.saturation = 0;
 	this.lightness = 0;
@@ -27,6 +29,7 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 	this.saturationRange = null;
 	this.lightnessRange = null;
 	this.bullsEyeRadius = 5;
+
 	// Closure hack since we're going to be using some of this stuff through events.
 	var me = this;
 
@@ -56,6 +59,7 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		this.updateDisplay();
 
 	}
+
 	this.setHSLRangeControls = function (hueRangeId,saturationRangeId,lightnessRangeId){
 		this.hueRange = document.getElementById(hueRangeId);
 		this.hueRange.onchange = function(){
@@ -136,31 +140,31 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		this.setHSLFromRGB();
 	}
 	this.setRedFromRangeControl = function(){
-		if(this.redRange == null){ // shouldn't happen
+		if(this.redRange == null) { 
 			return;
 		}
-	this.setRed(this.redRange.value);
-	
+		this.setRed(this.redRange.value);
+	}
 	this.setGreen = function(green){
 		this.green = green;
 		this.clampRGB();
 		this.setHSLFromRGB();
 	}
 	this.setGreenFromRangeControl = function(){
-		if(this.greenRange == null){ // shouldn't happen
+		if(this.greenRange == null){ 
 			return;
 		}
 		this.setGreen(this.greenRange.value);
 	}
-	
+
 	this.setBlue = function(blue){
 		this.blue = blue;
 		this.clampRGB();
 		this.setHSLFromRGB();
 	}
-	
+
 	this.setBlueFromRangeControl = function(){
-		if(this.blueRange == null){ // shouldn't happen
+		if(this.blueRange == null){ 
 			return;
 		}
 		this.setBlue(this.blueRange.value);
@@ -173,26 +177,26 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		this.clampHSL();
 		this.setRGBFromHSL();
 	}
-	
+
 	this.setHue = function(hue){
 		this.hue = hue;
 		this.setRGBFromHSL();
 	}
-	
+
 	this.setHueFromRangeControl = function(){
-		if(this.hueRange == null){ // shouldn't happen
-		return;
+		if(this.hueRange == null){ 
+			return;
 		}
 		this.setHue(this.hueRange.value);
 	}
-	
+
 	this.setSaturation = function(saturation){
 		this.saturation = saturation;
 		this.setRGBFromHSL();
 	}
-	
+
 	this.setSaturationFromRangeControl = function(){
-		if(this.saturationRange == null){ // shouldn't happen
+		if(this.saturationRange == null){
 			return;
 		}
 		this.setSaturation(this.saturationRange.value);
@@ -202,18 +206,18 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		this.lightness = lightness;
 		this.setRGBFromHSL();
 	}
-	
+
 	this.setLightnessFromRangeControl = function(){
-		if(this.lightnessRange == null){ // shouldn't happen
+		if(this.lightnessRange == null){
 			return;
 		}
 		this.setLightness(this.lightnessRange.value);
 	}
-	
+
 	this.setBullsEyeRadius = function(newRadius){
 		this.bullsEyeRadius = newRadius;
 	}
-	
+
 	this.setHSLFromRGB = function(){
 		var normalizedRed = this.red / 255.0;
 		var normalizedGreen = this.green / 255.0;
@@ -240,12 +244,12 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 			this.saturation = chroma / (1 - Math.abs(2 * this.lightness - 1));
 
 		}
-	
+
 		this.clampHSL();
 		this.updateRGBString();
 		this.updateDisplay();
 	}
-	
+
 	this.updateRGBString = function(){
 		var hex = "#" + ("000000" + this.rgbToHex(this.red,this.green,this.blue)).slice(-6);
 		this.RGBString = hex;
@@ -298,7 +302,7 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		this.chosenX = (this.saturation) * this.satvalElement.offsetWidth;
 		this.chosenY = (this.lightness * this.satvalElement.offsetHeight);
 	}
-	
+
 	this.updateDisplay = function(){
 		this.drawSpectrum();
 		this.drawSV();
@@ -314,7 +318,7 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		throw "Invalid color component";
 		return ((r << 16) | (g << 8) | b).toString(16);
 	}
-	
+
 	this.setTextInputs = function (){
 		if(this.RGBInput != null){
 			this.RGBInput.value = this.RGBString;
@@ -323,7 +327,7 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 			this.HSLInput.value = Math.round(this.hue) + "," + Math.round(this.saturation * 100) + "%," + Math.round(this.lightness * 100) + "%";
 		}
 	}
-	
+
 	this.setRangeControls = function (){
 		if(this.redRange != null){
 			this.redRange.value = this.red;
@@ -344,14 +348,14 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 			this.lightnessRange.value = this.lightness;
 		}
 	}
-	
+
 	this.getSelectedColor = function(){
 		var c = this.satvalElement.getContext('2d');
 		this.saturation = this.chosenX / this.satvalElement.offsetWidth;
 		this.lightness = this.chosenY / this.satvalElement.offsetHeight;
 		this.setRGBFromHSL();
 	}
-	
+
 	this.setWellColor = function(){
 
 		this.wellElement.style.backgroundColor = this.RGBString;
@@ -382,7 +386,7 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		hueContext.fillRect(0,0,this.hueElement.offsetWidth,this.hueElement.offsetHeight);
 
 	}
-	
+
 	this.drawSV = function(){
 		var svContext = this.satvalElement.getContext('2d');  
 		var satGradient;
@@ -408,7 +412,7 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		this.setRGBFromHSL();
 
 	}
-	
+
 	this.drawBullsEyes = function(){
 		var ctx = this.satvalElement.getContext("2d");
 		var myHue = this.hue;

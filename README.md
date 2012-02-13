@@ -1,5 +1,5 @@
 #Overview
-SimplePicker is a pure HTML5 Canvas/JavaScript color picker, with no reliance on external images or frameworks (such as jQUery), released under the
+SimplePicker is a pure HTML5 Canvas/JavaScript color picker. No external images. No reliance on external frameworks (such as jQuery). No CSS (unless you add your own). Released under the
 terms of the MIT License.
 
 Minimal usage requires two HTML 5 Canvas elements (one for hue, one for saturation and lightness) and one arbitrary HTML element to show the selected color (the background color of the element will be set to the chosen color). 
