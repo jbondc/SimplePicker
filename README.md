@@ -1,5 +1,5 @@
 #Overview
-SimplePicker is a pure HTML5 Canvas/JavaScript color picker. Touch-friendly. No external images. No reliance on external frameworks (such as jQuery). No CSS (style to suit yourself). Self-contained JavaScript object (should work without interfering with any framework you're using) 
+SimplePicker is a pure HTML5 Canvas/JavaScript color picker. Touch-friendly. No external images. No reliance on external frameworks (such as jQuery). No CSS (style to suit yourself). Self-contained JavaScript object (should work without interfering with any framework you're using).
 
 Released under the terms of the MIT License.
 
@@ -32,7 +32,7 @@ See a <a href="http://contraterrene.com/snippets/SimplePicker/Example.html">live
 	<script src="SimplePicker.js"></script>
 
 	<script type="text/javascript">
-   // Set up a SimplePicker with range controls for RGB and HSL.
+    // Set up a SimplePicker with range controls for RGB and HSL.
 	function setupPicker(){
 		var mypicker = new SimplePicker("huewell","slwell","resultwell");
 		mypicker.setRGBRangeControls("red","green","blue");
