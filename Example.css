@@ -6,11 +6,20 @@
 	margin: 1em;
 	padding: 2em;
 }
+.pickerwells
+{
+	position: relative;
+	top: -10px;
+	border: 4px inset #796C6C;
+	height: 200px;
+	width: 434px;
+}
 .textvalues
 {
 	border: 4px inset #796C6C;
 	padding: 0.5em;
 	text-align: inherit;
+	width: 419px;
 }
 #styledhslval
 {
@@ -24,7 +33,7 @@
 	background-color: #000;
 	color: #00FF00;
 	text-align: center;
-	width: 8em;
+	width: 5.5em;
 }
 .sliderbank
 {
@@ -57,15 +66,28 @@
 }
 .slcontainer
 {
-	width: 200px;
+	border-right: 9px ridge #796C6C;
+	left: 0px;
 	height: 200px;
-	border: 4px ridge #796C6C;
+	width: 350px;
+	top: -202px;
+	position: relative;
+}
+.slstyle
+{
 }
 .huecontainer
 {
-	border: 4px ridge #796C6C;
-	width: 200px;
-	height: 20px;
+	width: 75px;
+	height: 200px;
+	position: relative;
+	left: 358px;
+	top: 0px;
+}
+.huestyle
+{
+	width: 75px;
+	height: 200px;
 }
 .resultwell
 {
@@ -74,10 +96,10 @@
 }
 .styledresultwell
 {
-	width: 100px;
-	height: 100px;
+	width: 145px;
+	height: 145px;
 	border: 4px inset #796C6C;
 	position: relative;
-	top: -159px;
+	top: -157px;
 	left: 268px;
 }

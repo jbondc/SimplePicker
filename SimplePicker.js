@@ -107,13 +107,13 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		}
 	}
 	this.clampHSL  = function(){ // Clamp HSL components.
-		if(this.hue > 360){ 
+		if(this.hue > 360){ // Since hue is defined as 0-360 degrees, wrap around if out of range.
 			this.hue -= 360;
 		}
 		if(this.hue < 0){
 			this.hue += 360;
 		}
-		if(this.saturation > 1){
+		if(this.saturation > 1){ // Saturation and lightness hard-clamped to between 0.0 and 1.0.
 			this.saturation = 1;
 		}
 		if(this.saturation < 0){
@@ -465,15 +465,31 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		ctx.closePath();
 	}
 
+	this.getMouseCoordinates = function(currentElement,absx,absy){
+			var totalOffsetX = 0;
+			var totalOffsetY = 0;
+			var canvasX = 0;
+			var canvasY = 0;
+			    do{
+			        totalOffsetX += currentElement.offsetLeft + currentElement.clientLeft;
+			        totalOffsetY += currentElement.offsetTop + currentElement.clientTop;
+			    }
+			    while(currentElement = currentElement.offsetParent)
+			    canvasX = event.pageX - totalOffsetX;
+			    canvasY = event.pageY - totalOffsetY;
+
+			    return {x:canvasX, y:canvasY}
+	}
 	this.hueElement.onclick =  function(e){
-		var x = e.pageX - e.target.offsetLeft;
-		var y = e.pageY - e.target.offsetTop;
-		me.changeHue(x,y);
+		var relCoords = me.getMouseCoordinates(this,e.pageX,e.pageY); // Note that "this" is the canvas in an event handler, not the SimplePicker object. :-)
+		me.changeHue(relCoords.x,relCoords.y);
+
 	};
 	this.satvalElement.onclick = function(e){
 		me.drawSV(); // Need to redraw to make sure we don't accidentally pick up part of the bullseye.
-		me.chosenX = (e.pageX - e.target.offsetLeft);
-		me.chosenY = (e.pageY - e.target.offsetTop);
+	    var relCoords = me.getMouseCoordinates(this,e.pageX,e.pageY); // Note that "this" is the canvas in an event handler, not the SimplePicker object. :-)
+		me.chosenX = relCoords.x;
+		me.chosenY = relCoords.y;
 		me.getSelectedColor();
 	}
 

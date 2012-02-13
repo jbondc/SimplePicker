@@ -11,7 +11,7 @@ HTML5 range controls (sliders) can also be specified if desired.
 
 	<script src="SimplePicker.js"></script>
 	<script type="text/javascript">
-
+	// Set up a SimplePicker with no controls other than clicking.
 	function setupPicker(){
 		var mypicker = new SimplePicker("huewell","slwell","resultwell");	
 	}
@@ -29,7 +29,7 @@ HTML5 range controls (sliders) can also be specified if desired.
 	<script src="SimplePicker.js"></script>
 
 	<script type="text/javascript">
-
+   // Set up a SimplePicker with range controls for RGB and HSL.
 	function setupPicker(){
 		var mypicker = new SimplePicker("huewell","slwell","resultwell");
 		mypicker.setRGBRangeControls("red","green","blue");
@@ -61,7 +61,7 @@ HTML5 range controls (sliders) can also be specified if desired.
 	<script src="SimplePicker.js"></script>
 
 	<script type="text/javascript">
-
+	// SimplePicker with range controls and text input/output fields.
 	function setupPicker(){
 		var mypicker = new SimplePicker("huewell","slwell","resultwell");
 		mypicker.setRGBRangeControls("red","green","blue");
@@ -104,8 +104,10 @@ run into scaling issues).
 There are some unavoidable issues relating to conversion between different color spaces. RGB components are quantized (integers between 0-255 inclusive),
 while HSL components are continuous (0-360 degrees for hue, 0.0-1.0 for saturation and lightness). This can produce small rounding errors.
 
-In addition, for certain values of lightness (0% and  100%), hue is essentially meaningless. 0% is black and 100% lightness is white, regardless of the hue. That means that more than one setting of for HSL will correspond to the same screen color, and may produce a hue "jump" under certain conditions.
+In addition, for certain values of lightness (0% and  100%), hue is essentially meaningless. 0% lightness is black and 100% lightness is white, regardless of the hue. That means that more than one setting for HSL will correspond to the same screen color, and may produce a hue "jump" under certain conditions.
 
+#Unimplemented
+It's intended that the text input fields will work both ways (that is, you can type an RGB or HSL value in using the keyboard),  but that isn't implemented yet. Right now they just display the current value as output.
 
 #API:
 
@@ -148,7 +150,7 @@ Binds HTML5 range controls ("sliders") to the current RGB values.
 
 Parameters:
 
-redRangeId,greenRangeId,blueRangeId should be the ids of HTML5 range controls with min 0, max 255, and step 1.
+*redRangeId*,*greenRangeId*,*blueRangeId* should be the ids of HTML5 range controls with min 0, max 255, and step 1.
 		
 		
 
