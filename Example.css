@@ -6,13 +6,21 @@
 	margin: 1em;
 	padding: 2em;
 }
+.styledpicex
+{
+	background-color: #4A4646;
+	border: 4px solid #B3ACAC;
+	color: #D0D0D0;
+	margin: 1em;
+	padding: 2em;
+}
 .pickerwells
 {
 	position: relative;
-	top: -10px;
+	top: 0px;
 	border: 4px inset #796C6C;
 	height: 200px;
-	width: 434px;
+	width: 433px;
 }
 .textvalues
 {
@@ -20,6 +28,8 @@
 	padding: 0.5em;
 	text-align: inherit;
 	width: 419px;
+	position: relative;
+	top: 10px;
 }
 #styledhslval
 {
@@ -32,6 +42,7 @@
 {
 	background-color: #000;
 	color: #00FF00;
+	font-size: 12px;
 	text-align: center;
 	width: 5.5em;
 }
@@ -42,6 +53,8 @@
 	text-align: inherit;
 	width: 419px;
 	height: 153px;
+	position: relative;
+	top: 5px;
 }
 .rgbsliders
 {
@@ -63,15 +76,17 @@
 	min-width: 5em;
 	text-align: center;
 	float: left;
+	font-size: 12px;
+	font-family: sans-serif;
 }
 .slcontainer
 {
 	border-right: 9px ridge #796C6C;
-	left: 0px;
+	left: 2px;
 	height: 200px;
 	width: 350px;
-	top: -202px;
 	position: relative;
+	top: -200px;
 }
 .slstyle
 {
@@ -81,8 +96,8 @@
 	width: 75px;
 	height: 200px;
 	position: relative;
-	left: 358px;
 	top: 0px;
+	left: 357px;
 }
 .huestyle
 {
@@ -99,7 +114,7 @@
 	width: 145px;
 	height: 145px;
 	border: 4px inset #796C6C;
+	left: 270px;
 	position: relative;
 	top: -157px;
-	left: 268px;
 }
