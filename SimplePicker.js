@@ -465,18 +465,19 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 		ctx.closePath();
 	}
 
-	this.getMouseCoordinates = function(currentElement,absx,absy){
+	this.getMouseCoordinates = function(currentElement,posx,posy){
 			var totalOffsetX = 0;
 			var totalOffsetY = 0;
 			var canvasX = 0;
 			var canvasY = 0;
+			
 			    do{
 			        totalOffsetX += currentElement.offsetLeft + currentElement.clientLeft;
 			        totalOffsetY += currentElement.offsetTop + currentElement.clientTop;
 			    }
 			    while(currentElement = currentElement.offsetParent)
-			    canvasX = event.pageX - totalOffsetX;
-			    canvasY = event.pageY - totalOffsetY;
+			    canvasX = posx - totalOffsetX;
+			    canvasY = posy - totalOffsetY;
 
 			    return {x:canvasX, y:canvasY}
 	}
@@ -487,7 +488,17 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 	};
 	this.satvalElement.onclick = function(e){
 		me.drawSV(); // Need to redraw to make sure we don't accidentally pick up part of the bullseye.
-	    var relCoords = me.getMouseCoordinates(this,e.pageX,e.pageY); // Note that "this" is the canvas in an event handler, not the SimplePicker object. :-)
+		if (e.pageX || e.pageY){ // From quirksmode.org
+				posx = e.pageX;
+				posy = e.pageY;
+			}
+			else if (e.clientX || e.clientY) 	{
+				posx = e.clientX + document.body.scrollLeft
+					+ document.documentElement.scrollLeft;
+				posy = e.clientY + document.body.scrollTop
+					+ document.documentElement.scrollTop;
+			}
+	    var relCoords = me.getMouseCoordinates(this,posx,posy); // Note that "this" is the canvas in an event handler, not the SimplePicker object. :-)
 		me.chosenX = relCoords.x;
 		me.chosenY = relCoords.y;
 		me.getSelectedColor();

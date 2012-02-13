@@ -167,7 +167,9 @@ Binds HTML5 range controls ("sliders") to the current HSL values.
 
 Parameters:
 
-*hueRangeId,saturationRangeId,lightnessRangeId* should be the ids of HTML5 range controls. *hueRangeId* should have min 0, max 360, and a step
+*hueRangeId,saturationRangeId,lightnessRangeId* should be the ids of HTML5 range controls. 
+
+*hueRangeId* should have min 0, max 360, and a step
 appropriate for the precision you need (1 is a good starting point).
 
 *saturationRangeId* and *lightnessRangeId* should have min 0, max 1.0 and an appropriate step (0.01 is a good starting point)
