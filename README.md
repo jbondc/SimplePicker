@@ -1,14 +1,14 @@
 #Overview
-SimplePicker is a pure HTML5 Canvas/JavaScript color picker. Touch-friendly. No external images. No reliance on external frameworks (such as jQuery). No CSS (style to suit yourself). Self-contained JavaScript object (should work without interfering with any framework you're using).
+SimplePicker is a pure HTML5 Canvas/JavaScript color picker for Webkit-based browsers (Safari and Chrome). Touch/mobile-friendly. No Flash. No external images. No reliance on external frameworks (such as jQuery). No CSS (style to suit yourself). Self-contained JavaScript object (should work without interfering with any framework you're using).
 
 Released under the terms of the MIT License.
 
-Minimal usage requires two HTML 5 Canvas elements (one for hue, one for saturation and lightness) and one arbitrary HTML element to show the selected color (the background color of the element will be set to the chosen color). 
+Minimal usage requires two HTML5 Canvas elements (one for hue, one for saturation and lightness) and one arbitrary HTML element to show the selected color (the background color of the element will be set to the chosen color). 
 
 Text fields for displaying the chosen color in RGB and HSL format, and
 HTML5 range controls (sliders) can also be specified if desired.
 
-See a <a href="http://contraterrene.com/snippets/SimplePicker/Example.html">live demo here</a>.
+See a <a href="http://contraterrene.com/snippets/SimplePicker/Example.html">live demo here</a> (use Safari or Chrome).
 
 #Basic usage:
 
@@ -108,7 +108,9 @@ There are some unavoidable issues relating to conversion between different color
 while HSL components are continuous (0-360 degrees for hue, 0.0-1.0 for saturation and lightness). This can produce small rounding errors.
 
 Also, for certain values of lightness (0% and  100%), hue is essentially meaningless. 0% lightness is black and 100% lightness is white, regardless of the hue. That means that more than one setting for the HSL controls will correspond to the same screen color (black or white). If SimplePicker can't calculate
-a meaningful hue, it assumes a hue value of 0 (red). This won't affect the actual color chosen (which is going to be very close to white or black, no matter which "hue" is chosen), but might mean that the range of colors displayed in the hue-saturation well isn't quite what you expected. 
+a meaningful hue, it assumes a hue value of 0 (red). This won't affect the actual color chosen (which is going to be very close to white or black, no matter which "hue" is chosen), but might mean that the range of colors displayed in the saturation/lightness well isn't quite what you expected. 
+
+This has been tested with Google Chrome and Apple Safari, but not Internet Explorer. If you have to support IE, my sympathies, but personally I've already wasted too much of my life on that "browser". While I would like to support Firefox, it's become too much of a moving target. Also, Firefox doesn't (yet) support the HTML5 range (slider) controls. Feel free to fork. :-)
 
 #Unimplemented
 It's intended that the text input fields will work both ways (that is, you can type an RGB or HSL value in using the keyboard),  but that isn't implemented yet. Right now they just display the current value as output. The basic issue here is how to handle "wrong" input values -- try to figure out what the user meant, or insist on a specific input format. It would be more robust to have separate text input fields for each of R,G,B and H,S,L, but
