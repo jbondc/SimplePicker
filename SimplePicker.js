@@ -488,16 +488,16 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 	};
 	this.satvalElement.onclick = function(e){
 		me.drawSV(); // Need to redraw to make sure we don't accidentally pick up part of the bullseye.
-		if (e.pageX || e.pageY){ // From quirksmode.org
-				posx = e.pageX;
-				posy = e.pageY;
-			}
-			else if (e.clientX || e.clientY) 	{
-				posx = e.clientX + document.body.scrollLeft
-					+ document.documentElement.scrollLeft;
-				posy = e.clientY + document.body.scrollTop
-					+ document.documentElement.scrollTop;
-			}
+		if (e.pageX || e.pageY){ // From quirksmode.org. Handles difference in events between Gecko and Webkit.
+			posx = e.pageX;
+			posy = e.pageY;
+		}
+		else if (e.clientX || e.clientY) 	{
+			posx = e.clientX + document.body.scrollLeft
+			+ document.documentElement.scrollLeft;
+			posy = e.clientY + document.body.scrollTop
+			+ document.documentElement.scrollTop;
+		}
 	    var relCoords = me.getMouseCoordinates(this,posx,posy); // Note that "this" is the canvas in an event handler, not the SimplePicker object. :-)
 		me.chosenX = relCoords.x;
 		me.chosenY = relCoords.y;
