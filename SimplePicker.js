@@ -390,7 +390,7 @@ function SimplePicker(hueElementId,satvalElementId,wellElementId){
 	this.drawSV = function(){
 		var svContext = this.satvalElement.getContext('2d');  
 		var satGradient;
-		var step = 0.005;
+		var step = 1/this.satvalElement.offsetHeight;
 		for(var strip = 0; strip < 1; strip+= step){
 			satGradient	=  svContext.createLinearGradient(0,this.satvalElement.offsetHeight * strip,this.satvalElement.offsetWidth,this.satvalElement.offsetHeight * (strip + 0.10));
 			satGradient.addColorStop(0,"hsl(" + this.hue + ",0%," + (strip * 100) + "%)");
