@@ -211,15 +211,13 @@ module MV.color {
             return new RGB(parseInt(arr[0], 16), parseInt(arr[1], 16), parseInt(arr[2], 16));
         }
 
-        static hexToHsl(color) {
-            return this.rgbToHsl(this.hexToRgb(color));
+        static hexToHsl(color: any) {
+            return Conversion.rgbToHsl(Conversion.hexToRgb(color));
         }
 
         static rgbToHex(r, g = null, b = null) {
             if (!(r instanceof color.RGB))
                 r = new color.RGB(r, g, b);
-
-            r.validate();
 
             return ((r.red << 16) | (r.green << 8) | r.blue).toString(16);
         }
@@ -262,11 +260,22 @@ module MV.color {
                 if(H < 0)
                     H = H + 360;
             }
-            console.log(H);
+
             return new color.HSL(H, S * 100, L * 100);
         }
 
         static hslToColor(h, s = null, l = null) {
+            var arr = _hslRgb(h, s, l);
+            return new Color(arr[0], arr[1], arr[2]);
+        }
+
+        static hslToHex(h, s = null, l = null) {
+            var arr = _hslRgb(h, s, l);
+
+            return ((arr[0] << 16) | (arr[1] << 8) | arr[2]).toString(16);
+        }
+
+        static _hslRgb(h, s = null, l = null) {
             if (!(h instanceof color.HSL))
                 h = new color.HSL(h, s, l);
 
@@ -276,7 +285,7 @@ module MV.color {
 
             var R, G, B, t1, t2, t3;
 
-            if(S == 0) {
+            if (S == 0) {
                 R = L * 255;
                 G = L * 255;
                 B = L * 255;
@@ -293,7 +302,7 @@ module MV.color {
                 B = 255 * this._hue2RGB(t1, t2, H - (1 / 3));
             }
 
-            return new Color(R, G, B);
+            return [R, G, B];
         }
 
         static _hue2RGB(t1, t2, t3) {

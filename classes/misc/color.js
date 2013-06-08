@@ -214,7 +214,7 @@ var MV;
                 return new RGB(parseInt(arr[0], 16), parseInt(arr[1], 16), parseInt(arr[2], 16));
             };
             Conversion.hexToHsl = function hexToHsl(color) {
-                return this.rgbToHsl(this.hexToRgb(color));
+                return Conversion.rgbToHsl(Conversion.hexToRgb(color));
             };
             Conversion.rgbToHex = function rgbToHex(r, g, b) {
                 if (typeof g === "undefined") { g = null; }
@@ -222,7 +222,6 @@ var MV;
                 if(!(r instanceof color.RGB)) {
                     r = new color.RGB(r, g, b);
                 }
-                r.validate();
                 return ((r.red << 16) | (r.green << 8) | r.blue).toString(16);
             };
             Conversion.rgbToHsl = function rgbToHsl(r, g, b) {
@@ -270,10 +269,21 @@ var MV;
                         H = H + 360;
                     }
                 }
-                console.log(H);
                 return new color.HSL(H, S * 100, L * 100);
             };
             Conversion.hslToColor = function hslToColor(h, s, l) {
+                if (typeof s === "undefined") { s = null; }
+                if (typeof l === "undefined") { l = null; }
+                var arr = Conversion._hslRgb(h, s, l);
+                return new MV.Color(arr[0], arr[1], arr[2]);
+            };
+            Conversion.hslToHex = function hslToHex(h, s, l) {
+                if (typeof s === "undefined") { s = null; }
+                if (typeof l === "undefined") { l = null; }
+                var arr = Conversion._hslRgb(h, s, l);
+                return ((arr[0] << 16) | (arr[1] << 8) | arr[2]).toString(16);
+            };
+            Conversion._hslRgb = function _hslRgb(h, s, l) {
                 if (typeof s === "undefined") { s = null; }
                 if (typeof l === "undefined") { l = null; }
                 if(!(h instanceof color.HSL)) {
@@ -298,7 +308,11 @@ var MV;
                     G = 255 * this._hue2RGB(t1, t2, H);
                     B = 255 * this._hue2RGB(t1, t2, H - (1 / 3));
                 }
-                return new MV.Color(R, G, B);
+                return [
+                    R, 
+                    G, 
+                    B
+                ];
             };
             Conversion._hue2RGB = function _hue2RGB(t1, t2, t3) {
                 if(t3 < 0) {

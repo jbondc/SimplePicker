@@ -7,9 +7,7 @@
 
 /// <reference path="classes/misc/color.ts" />
 
-
 class SimplePicker {
-
     picker: any;
     slider: any;
     cbox: HTMLElement;
@@ -25,12 +23,12 @@ class SimplePicker {
     pointer: any;
 
     step = 0.01;
-    pointerRadius = 5;
 
+    // todo array options to configure properties
     constructor(sliderId, pickerId, resultId) {
-        this.slider = document.getElementById(sliderId);
-        this.picker = document.getElementById(pickerId);
-        this.cbox = document.getElementById(resultId);
+        this.slider = document.getElementById(sliderId); // canvas
+        this.picker = document.getElementById(pickerId); // canvas
+        this.cbox = document.getElementById(resultId); // html element
 
         if (this.slider.offsetHeight > this.slider.offsetWidth) {
             this.verticalHue = true;
@@ -40,7 +38,10 @@ class SimplePicker {
 
         this.rgb = new MV.color.RGB;
         this.hsl = new MV.color.HSL;
-        this.pointer = { x: 0, y: 0 };
+        this.pointer = { type: null };
+
+        this._createContainer(this.picker, "P");
+        this._createContainer(this.slider, "S");
 
         this.range = { red: null, blue: null, green: null, hue: null, sat: null, lum: null };
         this.input = { rgb: null, hsl: null };
@@ -70,6 +71,7 @@ class SimplePicker {
 
             // Redraw hue / color picker
             this._updateControls();
+            this._updatePointer('S', pos.x, pos.y);
             this.drawColorPicker();
 
         }.bind(this);
@@ -82,6 +84,7 @@ class SimplePicker {
             this.updateFromPointer(pos.x, pos.y);
             this.pointer.type = null;
 
+            this._updatePointer('P', pos.x, pos.y);
             this._updateControls();
 
         }.bind(this);
@@ -105,8 +108,33 @@ class SimplePicker {
         this.setRGB(255, 0, 0);
     }
 
+    _createContainer(canvas, type) {
+        var className = (type === 'P') ? 'pickerColor' : 'pickerSlider';
+        var elm = document.createElement('div');
+        elm.className = 'pickerContainer ' + className;
+        canvas.parentNode.replaceChild(elm, canvas);
+        elm.appendChild(canvas);
+
+        var p = document.createElement('div');
+        p.className = 'pointer';
+        elm.appendChild(p);
+
+        var gcs = getComputedStyle(p, null);
+        if (type == 'P') {
+            var bg = gcs.getPropertyValue("background-color");
+            p.hsl = MV.color.Conversion.hexToHsl(bg);
+
+        } else {
+            p.className += this.verticalHue ? ' vertical' : ' horizontal';
+        }
+        p.style.width = gcs.getPropertyValue("width");
+        p.style.height = gcs.getPropertyValue("height");
+
+        this.pointer[type] = p;
+    }
+
     updateFromPointer(x, y) {
-        console.log('Position: ' + x + ',' + y);
+        //console.log('Position: ' + x + ',' + y);
 
         if (this.pointer.type === 'S') {
             if (this.verticalHue === true) {
@@ -180,11 +208,7 @@ class SimplePicker {
 
 	updateRGB() {
 	    this.rgb.validate();
-	    console.log(this.rgb);
-
 	    this.hsl = MV.color.Conversion.rgbToHsl(this.rgb);
-	    console.log(this.hsl);
-
 	    this.hex = this.rgb.toColor().toHex();
 	}
 
@@ -212,10 +236,7 @@ class SimplePicker {
 
 	updateHSL() {
 	    this.hsl.validate();
-	    console.log(this.hsl);
-
 	    this.rgb = MV.color.Conversion.hslToColor(this.hsl).toRGB();
-
 	    this.hex = this.rgb.toColor().toHex();
 	}
 
@@ -224,11 +245,7 @@ class SimplePicker {
 		this.drawColorPicker();
 
         // Update pointer pos.. to match color
-		this.pointer.x = (this.hsl.saturation / 100 * this.picker.offsetWidth);
-		this.pointer.y = (this.hsl.luminance / 100 * this.picker.offsetHeight);
-
-		this.drawPointer();
-
+	    this._updatePointerFromColor(this.hsl);
 		this._updateControls();
 	}
 
@@ -260,7 +277,6 @@ class SimplePicker {
 	}
 
 	drawSlider() {
-	    console.log("draw slider");
 		var hueContext = this.slider.getContext('2d');
 		var hueGradient;
 
@@ -285,7 +301,6 @@ class SimplePicker {
 	}
 
 	drawColorPicker() {
-	    console.log('draw color picker');
 		var context = this.picker.getContext('2d');  
 		var gradient;
 		var step = 1/this.picker.offsetHeight;
@@ -299,53 +314,53 @@ class SimplePicker {
 		}
 	}
 
-	drawPointer() {
+    // not used:  but can update pointer(s) based on input of a color
+	_updatePointerFromColor(hsl) {
+	   var x, y;
 
-	    // create div with a radius over the canvas...
-        // update its location on mousemove
+	   x = (hsl.saturation / 100 * this.picker.offsetWidth);
+	   y = (hsl.luminance / 100 * this.picker.offsetHeight);
+	   this._updatePointer('P', x, y);
 
-	    return;
-		var ctx = this.picker.getContext("2d");
-		var myHue = this.hsl.hue;
-		if(myHue < 0)
-			myHue += 360;
+	   if (this.verticalHue == true) {
+	       x = 0;
+	       y = (hsl.hue / 360) * this.slider.offsetHeight;
+	   } else {
+	       x = (hsl.hue / 360) * this.slider.offsetWidth;
+	       y = 0;
+	   }
+	   this._updatePointer('S', x, y);
+	}
 
-		var antiHue =  this.hsl.hue + 180;
-		if(antiHue > 360)
-			antiHue -= 360;
-		antiHue = Math.round(antiHue);
+	_updatePointer(type, x, y) {
+	    var p = this.pointer[type];
+	    var mw = parseInt(p.style.width) / 2;
+	    var mh = parseInt(p.style.height) / 2;
 
-		var antiLightness = (this.hsl.luminance > 49 ? 0 : 100);
-		var antiSaturation = this.hsl.saturation + 50;
-		if(antiSaturation > 100)
-			antiSaturation -= 100;
+	    if (type === 'S') {
+	        if (this.verticalHue == true) {
+	            p.style.left = (this.slider.offsetWidth / 2 - mw) + 'px';
+	            p.style.top = (y - mh) + 'px';
+	        } else {
+	            p.style.left = (x - mw) + 'px';
+	            p.style.top = (this.slider.offsetHeight / 2 - mh) + 'px';
+	        }
+	    } else {
+	        p.style.top = (y - mh) + 'px';
+	        p.style.left = (x - mh) + 'px';
 
-		var stroke =  "hsl(" + antiHue + "," + "100%," + antiLightness + "%)";
-		ctx.lineWidth = 2;
-		ctx.strokeStyle = stroke;
-		ctx.beginPath();
-		ctx.arc(this.pointer.x,this.pointer.y,this.pointerRadius, 0, 2*Math.PI, false);
-		ctx.stroke();
-		ctx.closePath();
+	        var lum, sat, hue, diff, adjust;
 
-		ctx = this.slider.getContext("2d");
+	        // Make pointer visible on dark/light background
+	        diff = Math.abs(p.hsl.luminance - this.hsl.luminance);
+	        if (diff > 35) // difference high enough?
+               return;
 
-		stroke = "hsl(" + antiHue + ","  + "100%," +  "0%)"; 
-		ctx.strokeStyle = stroke; 
-		ctx.lineWidth = 2;
-		ctx.beginPath();
-		var hueX;
-		var hueY;
-		if(this.verticalHue == true){
-			hueX  = this.slider.offsetWidth / 2;
-			hueY = (myHue / 360) * this.slider.offsetHeight;
-		} else {
-		    hueX = (myHue / 360) * this.slider.offsetWidth;
-		    hueY = this.slider.offsetHeight / 2;
-		}
-		ctx.arc(hueX,hueY,this.pointerRadius, 0, 2*Math.PI, false);
-		ctx.stroke();
-		ctx.closePath();
+	        adjust = (this.hsl.luminance > 50 ? -30 : 30);
+	        p.hsl.luminance = this.hsl.luminance + adjust;
+
+	        p.style.backgroundColor = '#' + MV.color.Conversion.hslToHex(p.hsl);
+	    }
 	}
 }
 

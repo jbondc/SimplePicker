@@ -6,6 +6,36 @@ canvas {
    user-select: none;
 }
 
+.pickerContainer {
+    position: relative;
+}
+
+.pickerContainer .pointer {
+    position: absolute;
+    width:8px;
+    height:8px;
+    background-color: #000;
+    border-radius: 8px;
+}
+
+.pickerColor canvas {
+}
+
+.pickerSlider canvas {
+}
+
+.pickerSlider .vertical {
+    opacity: 0.4;
+    width: 80%;
+    height: 4px;
+}
+
+.pickerSlider .horizontal{
+    opacity: 0.4;
+    width: 4px;
+    height: 80%;
+}
+
 .picex
 {
 	background-color: #4A4646;
