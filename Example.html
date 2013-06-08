@@ -2,6 +2,7 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="Example.css" />
 
+    <script src="classes/misc/color.js"></script>
 	<script src="SimplePicker.js"></script>
 
 	<script type="text/javascript">
@@ -15,6 +16,7 @@
 		rangetextpicker.setHSLRangeControls("rangetexthue","rangetextsaturation","rangetextlightness");
 		rangetextpicker.setHSLInput("rangetexthslval");
 		rangetextpicker.setRGBInput("rangetextrgbval");
+		rangetextpicker.draw();
 
 		// Set up picker with CSS styling. JavaScript is same as previous, only CSS is different. :-)
 		var styledpicker = new SimplePicker("styledhuewell","styledslwell","styledresultwell");
@@ -22,12 +24,14 @@
 		styledpicker.setHSLRangeControls("styledhue","styledsaturation","styledlightness");
 		styledpicker.setHSLInput("styledhslval");
 		styledpicker.setRGBInput("styledrgbval");
+		styledpicker.draw();
 
 	}
 
 	</script>
+</head>
 
-	<body onload="setupPicker();">
+<body onload="setupPicker();">
 		
 
 
@@ -35,8 +39,8 @@
 
 	<div class="picex">
 		<h1>Unstyled picker with range controls and text fields (click or tap to set colors, or use sliders)</h1>
-		<canvas id="rangetexthuewell" class="huewell" width="200" height="20">></canvas><p />
-		<canvas id="rangetextslwell" class="slwell" width="200" height="200"></canvas><p />
+		<canvas id="rangetexthuewell" class="huewell" width="200" height="20"></canvas><p></p>
+		<canvas id="rangetextslwell" class="slwell" width="200" height="200"></canvas><p></p>
 		<div class="resultwell" id="rangetextresultwell"> </div> 
 
 		Red: <input type="range" min = "0" max ="255" step="1" id="rangetextred"  /><br />
@@ -57,10 +61,10 @@
 		<div class="styledcolorpicker">
 			<div class="pickerwells">
 				<div class="huecontainer">
-					<canvas class="huestyle" id="styledhuewell" class="huewell" width="75" height="200">></canvas><p />
+					<canvas class="huestyle" id="styledhuewell" class="huewell" width="75" height="200"></canvas><p></p>
 				</div>
 				<div class="slcontainer">
-					<canvas class="slstyle" id="styledslwell" class="slwell" width="350" height="200"></canvas><p />
+					<canvas class="slstyle" id="styledslwell" class="slwell" width="350" height="200"></canvas><p></p>
 				</div>
 			</div>
 
