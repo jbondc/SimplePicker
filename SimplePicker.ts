@@ -19,7 +19,6 @@ class SimplePicker {
     verticalHue: bool;
     pointer: any;
     control: SimplePickerControls;
-    step = 0.01;
 
     // todo array options to configure properties
     constructor(sliderId, pickerId, previewId) {
@@ -51,12 +50,12 @@ class SimplePicker {
         canvas.parentNode.replaceChild(elm, canvas);
         elm.appendChild(canvas);
 
-        elm.onmousedown = function(evt) {
+        elm.onmousedown = function(evt) => {
             this.pointer.type = type;
             evt.preventDefault();
-        }.bind(this);
+        };
 
-        elm.onmouseup = function (evt) {
+        elm.onmouseup = function(evt) => {
             if (this.pointer.type !== type)
                 return;
 
@@ -73,10 +72,9 @@ class SimplePicker {
 
             if (type === 'S')
                 this.drawColorPicker();
+        };
 
-        }.bind(this);
-
-        elm.addEventListener('mousemove', function(evt) {
+        elm.addEventListener('mousemove', function(evt) => {
             if (this.pointer.type !== type)
                 return;
 
@@ -88,7 +86,7 @@ class SimplePicker {
             this.updateFromPointer(pos.x, pos.y);
             this._updatePointer(type, pos.x, pos.y);
 
-        }.bind(this), false);
+        }, false);
 
         var p = document.createElement('div'), gcs, bg;
         p.className = 'pointer';

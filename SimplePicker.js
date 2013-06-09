@@ -1,6 +1,5 @@
 var SimplePicker = (function () {
     function SimplePicker(sliderId, pickerId, previewId) {
-        this.step = 0.01;
         this.slider = document.getElementById(sliderId);
         this.picker = document.getElementById(pickerId);
         this.preview = document.getElementById(previewId);
@@ -20,44 +19,45 @@ var SimplePicker = (function () {
         this.control = new SimplePickerControls(this);
     }
     SimplePicker.prototype._createContainer = function (canvas, type) {
+        var _this = this;
         var className = (type === 'P') ? 'spColor' : 'spSlider';
         var elm = document.createElement('div');
         elm.className = 'spContainer ' + className;
         canvas.parentNode.replaceChild(elm, canvas);
         elm.appendChild(canvas);
         elm.onmousedown = function (evt) {
-            this.pointer.type = type;
+            _this.pointer.type = type;
             evt.preventDefault();
-        }.bind(this);
+        };
         elm.onmouseup = function (evt) {
-            if(this.pointer.type !== type) {
+            if(_this.pointer.type !== type) {
                 return;
             }
             if(type === 'P') {
-                var pos = dom.getMousePos(this.picker, evt);
+                var pos = dom.getMousePos(_this.picker, evt);
             } else {
-                var pos = dom.getMousePos(this.slider, evt);
+                var pos = dom.getMousePos(_this.slider, evt);
             }
-            this.updateFromPointer(pos.x, pos.y);
-            this.pointer.type = null;
-            this._updateControls();
-            this._updatePointer(type, pos.x, pos.y);
+            _this.updateFromPointer(pos.x, pos.y);
+            _this.pointer.type = null;
+            _this._updateControls();
+            _this._updatePointer(type, pos.x, pos.y);
             if(type === 'S') {
-                this.drawColorPicker();
+                _this.drawColorPicker();
             }
-        }.bind(this);
+        };
         elm.addEventListener('mousemove', function (evt) {
-            if(this.pointer.type !== type) {
+            if(_this.pointer.type !== type) {
                 return;
             }
             if(type === 'P') {
-                var pos = dom.getMousePos(this.picker, evt);
+                var pos = dom.getMousePos(_this.picker, evt);
             } else {
-                var pos = dom.getMousePos(this.slider, evt);
+                var pos = dom.getMousePos(_this.slider, evt);
             }
-            this.updateFromPointer(pos.x, pos.y);
-            this._updatePointer(type, pos.x, pos.y);
-        }.bind(this), false);
+            _this.updateFromPointer(pos.x, pos.y);
+            _this._updatePointer(type, pos.x, pos.y);
+        }, false);
         var p = document.createElement('div'), gcs, bg;
         p.className = 'pointer';
         elm.appendChild(p);
