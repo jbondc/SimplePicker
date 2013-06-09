@@ -58,20 +58,21 @@ var SimplePicker = (function () {
             this.updateFromPointer(pos.x, pos.y);
             this._updatePointer(type, pos.x, pos.y);
         }.bind(this), false);
-        var p = document.createElement('div');
+        var p = document.createElement('div'), gcs, bg;
         p.className = 'pointer';
         elm.appendChild(p);
-        var gcs = getComputedStyle(p, null);
         if(type == 'P') {
-            var bg = gcs.getPropertyValue("background-color");
+            gcs = getComputedStyle(p, null);
+            bg = gcs.getPropertyValue("background-color");
             this.pointer.hsl = MV.color.Conversion.hexToHsl(bg);
         } else {
             elm.className += this.verticalHue ? ' vertical' : ' horizontal';
+            gcs = getComputedStyle(p, null);
         }
         p.style.width = gcs.getPropertyValue("width");
         p.style.height = gcs.getPropertyValue("height");
         this.pointer[type + '-w'] = parseInt(p.style.width) / 2;
-        this.pointer[type + '-h'] = parseInt(p.style.width) / 2;
+        this.pointer[type + '-h'] = parseInt(p.style.height) / 2;
         gcs = getComputedStyle(elm, null);
         this.pointer[type + '-wmax'] = parseInt(gcs.getPropertyValue("width"));
         this.pointer[type + '-hmax'] = parseInt(gcs.getPropertyValue("height"));
