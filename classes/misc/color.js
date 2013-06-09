@@ -222,7 +222,11 @@ var MV;
                 if(!(r instanceof color.RGB)) {
                     r = new color.RGB(r, g, b);
                 }
-                return ((r.red << 16) | (r.green << 8) | r.blue).toString(16);
+                var hex = ((r.red << 16) | (r.green << 8) | r.blue).toString(16);
+                while(hex.length < 6) {
+                    hex = "0" + hex;
+                }
+                return hex;
             };
             Conversion.rgbToHsl = function rgbToHsl(r, g, b) {
                 if (typeof g === "undefined") { g = null; }
@@ -281,7 +285,7 @@ var MV;
                 if (typeof s === "undefined") { s = null; }
                 if (typeof l === "undefined") { l = null; }
                 var arr = Conversion._hslRgb(h, s, l);
-                return ((arr[0] << 16) | (arr[1] << 8) | arr[2]).toString(16);
+                return Conversion.rgbToHex(arr[0], arr[1], arr[2]);
             };
             Conversion._hslRgb = function _hslRgb(h, s, l) {
                 if (typeof s === "undefined") { s = null; }

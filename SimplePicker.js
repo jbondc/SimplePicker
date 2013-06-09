@@ -1,9 +1,9 @@
 var SimplePicker = (function () {
-    function SimplePicker(sliderId, pickerId, resultId) {
+    function SimplePicker(sliderId, pickerId, previewId) {
         this.step = 0.01;
         this.slider = document.getElementById(sliderId);
         this.picker = document.getElementById(pickerId);
-        this.cbox = document.getElementById(resultId);
+        this.preview = document.getElementById(previewId);
         if(this.slider.offsetHeight > this.slider.offsetWidth) {
             this.verticalHue = true;
         } else {
@@ -16,84 +16,65 @@ var SimplePicker = (function () {
         };
         this._createContainer(this.picker, "P");
         this._createContainer(this.slider, "S");
-        this.range = {
-            red: null,
-            blue: null,
-            green: null,
-            hue: null,
-            sat: null,
-            lum: null
-        };
-        this.input = {
-            rgb: null,
-            hsl: null
-        };
-        this.slider.onmousedown = function (evt) {
-            this.pointer.type = 'S';
-            evt.preventDefault();
-        }.bind(this);
-        this.picker.onmousedown = function (evt) {
-            this.pointer.type = 'P';
-            evt.preventDefault();
-        }.bind(this);
-        this.slider.onmouseout = this.picker.onmouseout = function (evt) {
-            this.pointer.type = null;
-        }.bind(this);
-        this.slider.onmouseup = function (evt) {
-            if(this.pointer.type !== 'S') {
-                return;
-            }
-            var pos = dom.getMousePos(this.slider, evt);
-            this.updateFromPointer(pos.x, pos.y);
-            this.pointer.type = null;
-            this._updateControls();
-            this._updatePointer('S', pos.x, pos.y);
-            this.drawColorPicker();
-        }.bind(this);
-        this.picker.onmouseup = function (evt) {
-            if(this.pointer.type !== 'P') {
-                return;
-            }
-            var pos = dom.getMousePos(this.picker, evt);
-            this.updateFromPointer(pos.x, pos.y);
-            this.pointer.type = null;
-            this._updatePointer('P', pos.x, pos.y);
-            this._updateControls();
-        }.bind(this);
-        this.picker.addEventListener('mousemove', function (evt) {
-            if(this.pointer.type !== 'P') {
-                return;
-            }
-            var pos = dom.getMousePos(this.picker, evt);
-            this.updateFromPointer(pos.x, pos.y);
-        }.bind(this), false);
-        this.slider.addEventListener('mousemove', function (evt) {
-            if(this.pointer.type !== 'S') {
-                return;
-            }
-            var pos = dom.getMousePos(this.slider, evt);
-            this.updateFromPointer(pos.x, pos.y);
-        }.bind(this), false);
         this.setRGB(255, 0, 0);
+        this.control = new SimplePickerControls(this);
     }
     SimplePicker.prototype._createContainer = function (canvas, type) {
-        var className = (type === 'P') ? 'pickerColor' : 'pickerSlider';
+        var className = (type === 'P') ? 'spColor' : 'spSlider';
         var elm = document.createElement('div');
-        elm.className = 'pickerContainer ' + className;
+        elm.className = 'spContainer ' + className;
         canvas.parentNode.replaceChild(elm, canvas);
         elm.appendChild(canvas);
+        elm.onmousedown = function (evt) {
+            this.pointer.type = type;
+            evt.preventDefault();
+        }.bind(this);
+        elm.onmouseup = function (evt) {
+            if(this.pointer.type !== type) {
+                return;
+            }
+            if(type === 'P') {
+                var pos = dom.getMousePos(this.picker, evt);
+            } else {
+                var pos = dom.getMousePos(this.slider, evt);
+            }
+            this.updateFromPointer(pos.x, pos.y);
+            this.pointer.type = null;
+            this._updateControls();
+            this._updatePointer(type, pos.x, pos.y);
+            if(type === 'S') {
+                this.drawColorPicker();
+            }
+        }.bind(this);
+        elm.addEventListener('mousemove', function (evt) {
+            if(this.pointer.type !== type) {
+                return;
+            }
+            if(type === 'P') {
+                var pos = dom.getMousePos(this.picker, evt);
+            } else {
+                var pos = dom.getMousePos(this.slider, evt);
+            }
+            this.updateFromPointer(pos.x, pos.y);
+            this._updatePointer(type, pos.x, pos.y);
+        }.bind(this), false);
         var p = document.createElement('div');
         p.className = 'pointer';
         elm.appendChild(p);
         var gcs = getComputedStyle(p, null);
         if(type == 'P') {
             var bg = gcs.getPropertyValue("background-color");
-            p.hsl = MV.color.Conversion.hexToHsl(bg);
+            this.pointer.hsl = MV.color.Conversion.hexToHsl(bg);
         } else {
-            p.className += this.verticalHue ? ' vertical' : ' horizontal';
+            elm.className += this.verticalHue ? ' vertical' : ' horizontal';
         }
         p.style.width = gcs.getPropertyValue("width");
         p.style.height = gcs.getPropertyValue("height");
+        this.pointer[type + '-w'] = parseInt(p.style.width) / 2;
+        this.pointer[type + '-h'] = parseInt(p.style.width) / 2;
+        gcs = getComputedStyle(elm, null);
+        this.pointer[type + '-wmax'] = parseInt(gcs.getPropertyValue("width"));
+        this.pointer[type + '-hmax'] = parseInt(gcs.getPropertyValue("height"));
         this.pointer[type] = p;
     };
     SimplePicker.prototype.updateFromPointer = function (x, y) {
@@ -108,51 +89,7 @@ var SimplePicker = (function () {
             this.hsl.luminance = (y / this.picker.offsetHeight) * 100;
         }
         this.updateHSL();
-        this._updateColorBox();
-    };
-    SimplePicker.prototype.setRGBInput = function (elmId) {
-        this.input.rgb = document.getElementById(elmId);
-    };
-    SimplePicker.prototype.setHSLInput = function (elmId) {
-        this.input.hsl = document.getElementById(elmId);
-    };
-    SimplePicker.prototype.setRGBRangeControls = function (redId, greenId, blueId) {
-        var me = this;
-        this.range.red = document.getElementById(redId);
-        this.range.red.onchange = function () {
-            me.setFromRange('red');
-        };
-        this.range.green = document.getElementById(greenId);
-        this.range.green.onchange = function () {
-            me.setFromRange('green');
-        };
-        this.range.blue = document.getElementById(blueId);
-        this.range.blue.onchange = function () {
-            me.setFromRange('blue');
-        };
-    };
-    SimplePicker.prototype.setHSLRangeControls = function (hueId, satId, lumId) {
-        var me = this;
-        this.range.hue = document.getElementById(hueId);
-        this.range.hue.onchange = function () {
-            me.setFromRange('hue');
-        };
-        this.range.sat = document.getElementById(satId);
-        this.range.sat.onchange = function () {
-            me.setFromRange('sat');
-        };
-        this.range.lum = document.getElementById(lumId);
-        this.range.lum.onchange = function () {
-            me.setFromRange('lum');
-        };
-    };
-    SimplePicker.prototype.isRGB = function (name) {
-        var rgbNames = [
-            'red', 
-            'green', 
-            'blue'
-        ];
-        return (rgbNames.indexOf(name) === -1) ? false : true;
+        this.updatePreview();
     };
     SimplePicker.prototype.setRGB = function (red, green, blue) {
         this.rgb.red = red;
@@ -164,19 +101,6 @@ var SimplePicker = (function () {
         this.rgb.validate();
         this.hsl = MV.color.Conversion.rgbToHsl(this.rgb);
         this.hex = this.rgb.toColor().toHex();
-    };
-    SimplePicker.prototype.setFromRange = function (name) {
-        if(!this.range[name]) {
-            throw new Error("Invalid range '" + name + "'");
-        }
-        var value = this.range[name].value;
-        if(this.isRGB(name)) {
-            this.rgb[name] = value;
-            this.updateRGB();
-        } else {
-            this.hsl[name] = value;
-            this.updateHSL();
-        }
     };
     SimplePicker.prototype.setHSL = function (hue, saturation, luminance) {
         this.hsl.hue = hue;
@@ -192,31 +116,15 @@ var SimplePicker = (function () {
     SimplePicker.prototype.draw = function () {
         this.drawSlider();
         this.drawColorPicker();
-        this._updatePointerFromColor(this.hsl);
+        this.updatePointerFromColor(this.hsl);
         this._updateControls();
     };
+    SimplePicker.prototype.updatePreview = function () {
+        this.preview.style.backgroundColor = this.hex;
+    };
     SimplePicker.prototype._updateControls = function () {
-        this._updateInput();
-        this._updateRange();
-        this._updateColorBox();
-    };
-    SimplePicker.prototype._updateInput = function () {
-        if(this.input.rgb != null) {
-            this.input.rgb.value = '#' + this.hex;
-        }
-        if(this.input.hsl != null) {
-            this.input.hsl.value = Math.round(this.hsl.hue) + "," + Math.round(this.hsl.saturation) + "%," + Math.round(this.hsl.luminance) + "%";
-        }
-    };
-    SimplePicker.prototype._updateRange = function () {
-        for(var name in this.range) {
-            if(this.range[name] !== null) {
-                this.range[name].value = this.isRGB(name) ? this.rgb[name] : this.hsl[name];
-            }
-        }
-    };
-    SimplePicker.prototype._updateColorBox = function () {
-        this.cbox.style.backgroundColor = this.hex;
+        this.control.update();
+        this.updatePreview();
     };
     SimplePicker.prototype.drawSlider = function () {
         var hueContext = this.slider.getContext('2d');
@@ -253,7 +161,7 @@ var SimplePicker = (function () {
             context.fillRect(0, this.picker.offsetHeight * strip, this.picker.offsetWidth, this.picker.offsetHeight * step);
         }
     };
-    SimplePicker.prototype._updatePointerFromColor = function (hsl) {
+    SimplePicker.prototype.updatePointerFromColor = function (hsl) {
         var x, y;
         x = (hsl.saturation / 100 * this.picker.offsetWidth);
         y = (hsl.luminance / 100 * this.picker.offsetHeight);
@@ -269,30 +177,139 @@ var SimplePicker = (function () {
     };
     SimplePicker.prototype._updatePointer = function (type, x, y) {
         var p = this.pointer[type];
-        var mw = parseInt(p.style.width) / 2;
-        var mh = parseInt(p.style.height) / 2;
+        var left, top, mw, mh;
         if(type === 'S') {
             if(this.verticalHue == true) {
-                p.style.left = (this.slider.offsetWidth / 2 - mw) + 'px';
-                p.style.top = (y - mh) + 'px';
+                left = this.slider.offsetWidth / 2;
+                top = y;
             } else {
-                p.style.left = (x - mw) + 'px';
-                p.style.top = (this.slider.offsetHeight / 2 - mh) + 'px';
+                left = x;
+                top = this.slider.offsetHeight / 2;
             }
         } else {
-            p.style.top = (y - mh) + 'px';
-            p.style.left = (x - mh) + 'px';
+            left = x;
+            top = y;
+        }
+        if(top < 0 || left < 0 || top > this.pointer[type + '-hmax'] || left > this.pointer[type + '-wmax']) {
+            return;
+        }
+        mw = this.pointer[type + '-w'];
+        mh = this.pointer[type + '-h'];
+        p.style.top = (top - mh) + 'px';
+        p.style.left = (left - mw) + 'px';
+        if(type === 'P') {
             var lum, sat, hue, diff, adjust;
-            diff = Math.abs(p.hsl.luminance - this.hsl.luminance);
+            diff = Math.abs(this.pointer.hsl.luminance - this.hsl.luminance);
             if(diff > 35) {
                 return;
             }
             adjust = (this.hsl.luminance > 50 ? -30 : 30);
-            p.hsl.luminance = this.hsl.luminance + adjust;
-            p.style.backgroundColor = '#' + MV.color.Conversion.hslToHex(p.hsl);
+            this.pointer.hsl.luminance = this.hsl.luminance + adjust;
+            p.style.backgroundColor = '#' + MV.color.Conversion.hslToHex(this.pointer.hsl);
         }
     };
     return SimplePicker;
+})();
+var SimplePickerControls = (function () {
+    function SimplePickerControls(sp) {
+        this.sp = sp;
+        this.range = {
+            red: null,
+            blue: null,
+            green: null,
+            hue: null,
+            saturation: null,
+            luminance: null
+        };
+        this.input = {
+            rgb: null,
+            hsl: null
+        };
+    }
+    SimplePickerControls.prototype.bindInputRGB = function (elmId) {
+        this.input.rgb = document.getElementById(elmId);
+        this.input.rgb.readonly = true;
+    };
+    SimplePickerControls.prototype.bindInputHSL = function (elmId) {
+        this.input.hsl = document.getElementById(elmId);
+        this.input.hsl.readonly = true;
+    };
+    SimplePickerControls.prototype.bindRGB = function (redId, greenId, blueId) {
+        var me = this;
+        this.range.red = document.getElementById(redId);
+        this.range.red.onchange = function () {
+            me.onRangeChange('red');
+        };
+        this.range.green = document.getElementById(greenId);
+        this.range.green.onchange = function () {
+            me.onRangeChange('green');
+        };
+        this.range.blue = document.getElementById(blueId);
+        this.range.blue.onchange = function () {
+            me.onRangeChange('blue');
+        };
+    };
+    SimplePickerControls.prototype.bindHSL = function (hueId, satId, lumId) {
+        var me = this;
+        this.range.hue = document.getElementById(hueId);
+        this.range.hue.onchange = function () {
+            me.onRangeChange('hue');
+        };
+        this.range.saturation = document.getElementById(satId);
+        this.range.saturation.onchange = function () {
+            me.onRangeChange('saturation');
+        };
+        this.range.luminance = document.getElementById(lumId);
+        this.range.luminance.onchange = function () {
+            me.onRangeChange('luminance');
+        };
+    };
+    SimplePickerControls.prototype.onRangeChange = function (name) {
+        if(!this.range[name]) {
+            throw new Error("Invalid control name '" + name + "'");
+        }
+        var value = this.range[name].value;
+        if(this._isRGB(name)) {
+            this.sp.rgb[name] = value;
+            this.sp.updateRGB();
+        } else {
+            this.sp.hsl[name] = value;
+            this.sp.updateHSL();
+            if(name === 'hue') {
+                this.sp.drawColorPicker();
+            }
+        }
+        this.sp.updatePointerFromColor(this.sp.hsl);
+        this.sp.updatePreview();
+    };
+    SimplePickerControls.prototype.update = function () {
+        this._updateInput();
+        this._updateRange();
+    };
+    SimplePickerControls.prototype._isRGB = function (name) {
+        var rgbNames = [
+            'red', 
+            'green', 
+            'blue'
+        ];
+        return (rgbNames.indexOf(name) === -1) ? false : true;
+    };
+    SimplePickerControls.prototype._updateInput = function () {
+        if(this.input.rgb != null) {
+            this.input.rgb.value = '#' + this.sp.hex;
+        }
+        if(this.input.hsl != null) {
+            this.input.hsl.value = Math.round(this.sp.hsl.hue) + "," + Math.round(this.sp.hsl.saturation) + "%," + Math.round(this.sp.hsl.luminance) + "%";
+        }
+    };
+    SimplePickerControls.prototype._updateRange = function () {
+        for(var name in this.range) {
+            if(this.range[name] !== null) {
+                this.range[name].value = this._isRGB(name) ? this.sp.rgb[name] : this.sp.hsl[name];
+            }
+        }
+    };
+    return SimplePickerControls;
 })();
 var dom = (function () {
     function dom() { }

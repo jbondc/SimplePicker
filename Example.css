@@ -1,4 +1,9 @@
-canvas {
+/* picker css */
+.spContainer {
+    position: relative;
+}
+
+.spContainer, .sliders {
    -moz-user-select: -moz-none;
    -khtml-user-select: none;
    -webkit-user-select: none;
@@ -6,153 +11,145 @@ canvas {
    user-select: none;
 }
 
-.pickerContainer {
-    position: relative;
-}
-
-.pickerContainer .pointer {
+.spContainer .pointer {
     position: absolute;
     width:8px;
     height:8px;
     background-color: #000;
     border-radius: 8px;
+    tranform: translate3d(0,0,0); 
 }
 
-.pickerColor canvas {
-}
-
-.pickerSlider canvas {
-}
-
-.pickerSlider .vertical {
+.spContainer.vertical .pointer {
     opacity: 0.4;
     width: 80%;
     height: 4px;
 }
 
-.pickerSlider .horizontal{
+.spContainer.horizontal .pointer  {
     opacity: 0.4;
     width: 4px;
     height: 80%;
 }
 
-.picex
+.spPreview
 {
+	width: 50px;
+	height: 50px;
+}
+
+/* custom */
+body {
+    font-size:13px;
+    font-family: Verdana;
+}
+
+h1 {
+    font-size: 1.4em;
+    margin-top:0;
+}
+
+.box {
 	background-color: #4A4646;
-	border: 4px solid #B3ACAC;
+	border: 2px solid #B3ACAC;
 	color: #D0D0D0;
 	margin: 1em;
 	padding: 2em;
 }
-.styledpicex
-{
-	background-color: #4A4646;
-	border: 4px solid #B3ACAC;
-	color: #D0D0D0;
-	margin: 1em;
-	padding: 2em;
-}
-.pickerwells
-{
+
+.styled .picker {
 	position: relative;
-	top: 0px;
 	border: 4px inset #796C6C;
 	height: 200px;
-	width: 433px;
+    width:430px;
 }
-.textvalues
+
+.styled .sl {
+	border-right: 5px ridge #796C6C;
+	height: 200px;
+}
+.styled .hue {
+	height: 200px;
+	position: absolute;
+	top: 0px;
+	left: 355px;
+}
+
+.styled .controls
 {
 	border: 4px inset #796C6C;
-	padding: 0.5em;
-	text-align: inherit;
-	width: 419px;
+	padding: 2px;
+	width: 426px;
 	position: relative;
-	top: 10px;
+	margin-top: 10px;
 }
-#styledhslval
+
+.styled .sliders .rgb, .styled .sliders .hsl
+{
+	border: 2px groove #796C6C;
+	padding: 5px;
+	margin-bottom: 0.25em;
+	width: 250px;
+}
+
+.styled .sliders {
+    vertical-align: top;
+}
+
+.styled .sliders input {
+    width: 165px;
+    padding:.5em;
+    padding-top:0;
+}
+
+.styled .label
+{
+	width: 6em;
+	min-width: 6em;
+	text-align: right;
+    padding-right: 8px;
+	float: left;
+	font-size: 12px;
+	font-family: sans-serif;
+    clear:left;
+}
+
+
+.styled .spPreview
+{
+	width: 145px;
+	height: 90%;
+	border: 2px inset #796C6C;
+	left: 275px;
+    top:2.5%;
+	position: absolute;
+}
+
+.styled .pointer {
+    background-color: #00a633;
+    width:20px;
+    height:20px;
+    border-radius: 20px;
+    border-width:3px;
+}
+
+
+.styled .input {
+    padding: 4px;
+    font-size: 0.9em;
+}
+
+.styled .input .hsl
 {
 	background-color: #000;
 	color: #00FF00;
 	text-align: center;
 	width: 8em;
 }
-.rgbstyle
+.styled .input .rgb
 {
 	background-color: #000;
 	color: #00FF00;
-	font-size: 12px;
 	text-align: center;
 	width: 5.5em;
-}
-.sliderbank
-{
-	border: 4px inset #796C6C;
-	padding: 0.5em;
-	text-align: inherit;
-	width: 419px;
-	height: 153px;
-	position: relative;
-	top: 5px;
-}
-.rgbsliders
-{
-	border: 5px groove #796C6C;
-	padding: 0.25em;
-	margin-bottom: 0.25em;
-	width: 250px;
-}
-.hsvsliders
-{
-	border: 5px groove #796C6C;
-	padding: 0.25em;
-	margin-bottom: 0.25em;
-	width: 250px;
-}
-.sliderlabel
-{
-	width: 5em;
-	min-width: 5em;
-	text-align: center;
-	float: left;
-	font-size: 12px;
-	font-family: sans-serif;
-}
-.slcontainer
-{
-	border-right: 9px ridge #796C6C;
-	left: 2px;
-	height: 200px;
-	width: 350px;
-	position: relative;
-	top: -200px;
-}
-.slstyle
-{
-}
-.huecontainer
-{
-	width: 75px;
-	height: 200px;
-	position: relative;
-	top: 0px;
-	left: 357px;
-}
-.huestyle
-{
-	width: 75px;
-	height: 200px;
-}
-.resultwell
-{
-	width: 50px;
-	height: 50px;
-}
-.styledresultwell
-{
-	width: 145px;
-	height: 145px;
-	border: 4px inset #796C6C;
-	left: 277px;
-	position: absolute;
-	top: 8px;
 }

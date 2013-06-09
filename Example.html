@@ -6,90 +6,79 @@
 	<script src="SimplePicker.js"></script>
 
 	<script type="text/javascript">
+	    function setupPicker(){
+		    // Bare unstyled picker with range controls and text input fields.
+	        var sp = new SimplePicker("slider", "color", "preview");
+		    sp.control.bindRGB("red", "green", "blue");
+		    sp.control.bindHSL("hue", "sat", "lum");
+		    sp.control.bindInputRGB("rgb");
+		    sp.control.bindInputHSL("hsl");
+		    sp.draw();
 
-	function setupPicker(){
-	
-		
-		// Set up unstyled picker with range controls and text input fields.
-		var rangetextpicker = new SimplePicker("rangetexthuewell","rangetextslwell","rangetextresultwell");
-		rangetextpicker.setRGBRangeControls("rangetextred","rangetextgreen","rangetextblue");
-		rangetextpicker.setHSLRangeControls("rangetexthue","rangetextsaturation","rangetextlightness");
-		rangetextpicker.setHSLInput("rangetexthslval");
-		rangetextpicker.setRGBInput("rangetextrgbval");
-		rangetextpicker.draw();
-
-		// Set up picker with CSS styling. JavaScript is same as previous, only CSS is different. :-)
-		var styledpicker = new SimplePicker("styledhuewell","styledslwell","styledresultwell");
-		styledpicker.setRGBRangeControls("styledred","styledgreen","styledblue");
-		styledpicker.setHSLRangeControls("styledhue","styledsaturation","styledlightness");
-		styledpicker.setHSLInput("styledhslval");
-		styledpicker.setRGBInput("styledrgbval");
-		styledpicker.draw();
-
-	}
-
+            // Picker with CSS styled elements 
+		    sp = new SimplePicker("sliderStyle", "colorStyle", "previewStyle");
+		    sp.control.bindRGB("redStyle", "greenStyle", "blueStyle");
+		    sp.control.bindHSL("hueStyle", "satStyle", "lumStyle");
+		    sp.control.bindInputRGB("rgbStyle");
+		    sp.control.bindInputHSL("hslStyle");
+		    sp.draw();
+	    }
 	</script>
 </head>
 
 <body onload="setupPicker();">
-		
 
-
-
-
-	<div class="picex">
+	<div class="box">
 		<h1>Unstyled picker with range controls and text fields (click or tap to set colors, or use sliders)</h1>
-		<canvas id="rangetexthuewell" class="huewell" width="200" height="20"></canvas><p></p>
-		<canvas id="rangetextslwell" class="slwell" width="200" height="200"></canvas><p></p>
-		<div class="resultwell" id="rangetextresultwell"> </div> 
 
-		Red: <input type="range" min = "0" max ="255" step="1" id="rangetextred"  /><br />
-		Green: <input type="range" min = "0" max ="255" step="1" id="rangetextgreen" /><br />
-		Blue: <input type="range" min = "0" max ="255" step="1" id="rangetextblue" /><br />
-		Hue: <input type="range" min = "0" max ="360" step="1" id="rangetexthue"  /><br />
-		Saturation: <input type="range" min = "0.0" max ="1.0" step="0.01" id="rangetextsaturation" /><br />
-		Lightness: <input type="range" min = "0.0" max ="1.0" step="0.01" id="rangetextlightness" /><br />
+        <canvas id="slider" class="spSlider" width="200" height="20"></canvas><p></p>
+		<canvas id="color" class="spColor" width="200" height="200"></canvas><p></p>
+		<div id="preview" class="spPreview"></div> 
 
-		RGB: <input type="text" id="rangetextrgbval" value = "unknown"/> HSL: <input type="text" id="rangetexthslval" value = "unknown"/><br />
+		Red: <input type="range" min="0" max ="255" step="1" id="red"  /><br />
+		Green: <input type="range" min="0" max="255" step="1" id="green" /><br />
+		Blue: <input type="range" min="0" max="255" step="1" id="blue" /><br />
+		Hue: <input type="range" min="0" max="360" step="1" id="hue"  /><br />
+		Saturation: <input type="range" min="1" max="100" step="1" id="sat" /><br />
+		Luminance: <input type="range" min="1" max="100" step="1" id="lum" /><br />
+
+		RGB: <input type="text" id="rgb" value="" /> HSL: <input type="text" id="hsl" value = "" />
 	</div>
 
+	<div class="box styled">	
+		<h1>Picker with CSS styling for Safari, Chrome or IE 10. Any modern HTML5 browser should work.</h1>
 
-
-
-	<div class="styledpicex">	
-		<h1>Picker with Webkit-based CSS styling for Safari or Chrome (Firefox doesn't support sliders, also the CSS would need more work to look good on Firefox). Should work on iPad, but depending on your finger size you might need to pinch-zoom a bit to make the controls a good size. :-)</h1>
-		<div class="styledcolorpicker">
-			<div class="pickerwells">
-				<div class="huecontainer">
-					<canvas class="huestyle" id="styledhuewell" class="huewell" width="75" height="200"></canvas><p></p>
-				</div>
-				<div class="slcontainer">
-					<canvas class="slstyle" id="styledslwell" class="slwell" width="350" height="200"></canvas><p></p>
-				</div>
+		<div class="picker">
+			<div class="sl">
+				<canvas class="spColor" id="colorStyle" width="350" height="200"></canvas>
 			</div>
-
-
-			<div class="sliderbank">
-
-				<div class="sliders">
-					<div class="rgbsliders">
-						<span class="sliderlabel">Red:</span> <input type="range" min = "0" max ="255" step="1" id="styledred"  class="rangestyle" /><br />
-						<span class="sliderlabel">Green:</span> <input type="range" min = "0" max ="255" step="1" id="styledgreen" class="rangestyle" /><br />
-						<span class="sliderlabel">Blue:</span> <input type="range" min = "0" max ="255" step="1" id="styledblue" class="rangestyle" /><br />
-					</div>
-					<div class="hsvsliders">
-						<span class="sliderlabel">Hue:</span> <input type="range" min = "0" max ="360" step="1" id="styledhue" class="rangestyle"  />
-						<span class="sliderlabel">Saturation:</span> <input type="range" min = "0.0" max ="1.0" step="0.01" id="styledsaturation" class="rangestyle" />
-						<span class="sliderlabel">Lightness:</span><input type="range" min = "0.0" max ="1.0" step="0.01" id="styledlightness" class="rangestyle" />
-					</div>
-				</div>
-				<div class="styledresultwell" id="styledresultwell">&nbsp; </div> 
-			</div>
-			<div class="textvalues">
-				RGB: <input class="rgbstyle" type="text" id="styledrgbval" value = "unknown"/> HSL: <input class="hslstyle" type="text" id="styledhslval" value = "unknown"/><br />
+			<div class="hue">
+				<canvas class="spSlider" id="sliderStyle" width="75" height="200"></canvas>
 			</div>
 		</div>
+
+		<div class="controls">
+			<div class="sliders">
+				<div class="rgb">
+					<span class="label">Red:</span> <input type="range" min="0" max="255" step="1" id="redStyle" />
+					<span class="label">Green:</span> <input type="range" min="0" max="255" step="1" id="greenStyle" />
+					<span class="label">Blue:</span> <input type="range" min="0" max="255" step="1" id="blueStyle" />
+				</div>
+				<div class="hsl">
+					<span class="label">Hue:</span> <input type="range" min="0" max="360" step="1" id="hueStyle"  />
+					<span class="label">Saturation:</span> <input type="range" min="1" max="100" step="1" id="satStyle" />
+					<span class="label">Luminance:</span> <input type="range" min="1" max="100" step="1" id="lumStyle" />
+				</div>
+			</div>
+			<div class="spPreview" id="previewStyle"></div> 
+
+            <div class="input">
+			    RGB: <input class="rgb" type="text" id="rgbStyle" value="" /> 
+                HSL: <input class="hsl" type="text" id="hslStyle" value="" />
+		    </div>
+		</div>
+
 	</div>
+
 </body>
 </html>
-

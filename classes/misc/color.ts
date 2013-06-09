@@ -212,14 +212,16 @@ module MV.color {
         }
 
         static hexToHsl(color: any) {
-            return Conversion.rgbToHsl(Conversion.hexToRgb(color));
+            return rgbToHsl(hexToRgb(color));
         }
 
         static rgbToHex(r, g = null, b = null) {
             if (!(r instanceof color.RGB))
                 r = new color.RGB(r, g, b);
 
-            return ((r.red << 16) | (r.green << 8) | r.blue).toString(16);
+            var hex = ((r.red << 16) | (r.green << 8) | r.blue).toString(16);
+            while (hex.length < 6) hex = "0" + hex;
+            return hex;
         }
 
         static rgbToHsl(r, g = null, b = null) {
@@ -271,8 +273,7 @@ module MV.color {
 
         static hslToHex(h, s = null, l = null) {
             var arr = _hslRgb(h, s, l);
-
-            return ((arr[0] << 16) | (arr[1] << 8) | arr[2]).toString(16);
+            return rgbToHex(arr[0], arr[1], arr[2]);
         }
 
         static _hslRgb(h, s = null, l = null) {
