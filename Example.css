@@ -1,6 +1,6 @@
 /* picker css */
 .spContainer {
-    position: relative;
+	position: relative;
 }
 
 .spContainer, .sliders {
@@ -12,25 +12,28 @@
 }
 
 .spContainer .pointer {
-    position: absolute;
-    width:8px;
-    height:8px;
-    background-color: #000;
-    border-radius: 8px;
-    tranform: translate3d(0,0,0);
-    z-index:9000; 
+	position: absolute;
+	width:8px;
+	height:8px;
+	background-color: #000;
+	border-radius: 8px;
+	tranform: translate3d(0,0,0); 
+}
+
+.spColor .pointer {
+	z-index:9000; 
 }
 
 .spContainer.vertical .pointer {
-    opacity: 0.4;
-    width: 80%;
-    height: 4px;
+	opacity: 0.4;
+	width: 80%;
+	height: 4px;
 }
 
 .spContainer.horizontal .pointer  {
-    opacity: 0.4;
-    width: 4px;
-    height: 80%;
+	opacity: 0.4;
+	width: 4px;
+	height: 80%;
 }
 
 .spPreview
@@ -41,13 +44,13 @@
 
 /* custom */
 body {
-    font-size:13px;
-    font-family: Verdana;
+	font-size:13px;
+	font-family: Verdana;
 }
 
 h1 {
-    font-size: 1.4em;
-    margin-top:0;
+	font-size: 1.4em;
+	margin-top:0;
 }
 
 .box {
@@ -62,7 +65,7 @@ h1 {
 	position: relative;
 	border: 4px inset #796C6C;
 	height: 200px;
-    width:430px;
+	width:430px;
 }
 
 .styled .sl {
@@ -94,13 +97,13 @@ h1 {
 }
 
 .styled .sliders {
-    vertical-align: top;
+	vertical-align: top;
 }
 
 .styled .sliders input {
-    width: 165px;
-    padding:.5em;
-    padding-top:0;
+	width: 165px;
+	padding:.5em;
+	padding-top:0;
 }
 
 .styled .label
@@ -108,11 +111,11 @@ h1 {
 	width: 6em;
 	min-width: 6em;
 	text-align: right;
-    padding-right: 8px;
+	padding-right: 8px;
 	float: left;
 	font-size: 12px;
 	font-family: sans-serif;
-    clear:left;
+	clear:left;
 }
 
 
@@ -122,22 +125,33 @@ h1 {
 	height: 90%;
 	border: 2px inset #796C6C;
 	left: 275px;
-    top:2.5%;
+	top:2.5%;
 	position: absolute;
 }
 
-.styled .pointer {
-    background-color: #00a633;
-    width:20px;
-    height:20px;
-    border-radius: 20px;
-    border-width:3px;
+.styled .spColor .pointer {
+	background-color: transparent !important;
+	width:26px;
+	height:26px;
+	border-radius: 15px;
+	border:5px dotted #00FF00;
+	box-sizing: border-box;
 }
 
+.styled .spSlider .pointer {
+	background-color:#fff;
+	border-radius: 0;
+	box-sizing: border-box;
+	width:100%;
+	opacity:0.4;
+	height: 8px;
+	border: 2px solid #000;
+	border-width: 2px 0;
+}
 
 .styled .input {
-    padding: 4px;
-    font-size: 0.9em;
+	padding: 4px;
+	font-size: 0.9em;
 }
 
 .styled .input .hsl
