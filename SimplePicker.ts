@@ -38,8 +38,6 @@ class SimplePicker {
 
         this._createContainer(this.picker, "P");
         this._createContainer(this.slider, "S");
-
-        this.setRGB(255, 0, 0); // TODO: allow default value
         this.control = new SimplePickerControls(this);
     }
 
@@ -50,43 +48,59 @@ class SimplePicker {
         canvas.parentNode.replaceChild(elm, canvas);
         elm.appendChild(canvas);
 
-        elm.onmousedown = function(evt) => {
-            this.pointer.type = type;
-            evt.preventDefault();
-        };
-
-        elm.onmouseup = function(evt) => {
+        var touchMove = function (evt) => {
             if (this.pointer.type !== type)
                 return;
 
             if (type === 'P')
-                var pos = dom.getMousePos(this.picker, evt);
+                var pos = dom.event.getRelativeCoords(evt, this.picker);
             else
-                var pos = dom.getMousePos(this.slider, evt);
+                var pos = dom.event.getRelativeCoords(evt, this.slider);
+
+            this.updateFromPointer(pos.x, pos.y);
+            this._updatePointer(type, pos.x, pos.y)
+        };
+
+        var touchend = function (evt) => {
+            window.removeEventListener('mousemove', touchMove);
+            window.removeEventListener('touchend', touchend);
+            window.removeEventListener('mouseup', touchend);
+
+            if (this.pointer.type !== type) {
+                this.pointer.type = null;
+                return;
+            }
+
+            if (type === 'P')
+                var pos = dom.event.getRelativeCoords(evt, this.picker);
+            else
+                var pos = dom.event.getRelativeCoords(evt, this.slider);
 
             this.updateFromPointer(pos.x, pos.y);
             this.pointer.type = null;
 
-            this._updateControls();
+            this.updatePreview();
+            this.control.update();
             this._updatePointer(type, pos.x, pos.y);
 
             if (type === 'S')
                 this.drawColorPicker();
+
+            evt.preventDefault();
         };
 
-        elm.addEventListener('mousemove', function(evt) => {
-            if (this.pointer.type !== type)
-                return;
+        var touchStart = function (evt) => {
+            this.pointer.type = type;
 
-            if (type === 'P')
-                var pos = dom.getMousePos(this.picker, evt);
-            else
-                var pos = dom.getMousePos(this.slider, evt);
+            window.addEventListener('touchend', touchend);
+            window.addEventListener('mouseup', touchend);
+            window.addEventListener('mousemove', touchMove);
+            evt.preventDefault();
+        };
 
-            this.updateFromPointer(pos.x, pos.y);
-            this._updatePointer(type, pos.x, pos.y);
-
-        }, false);
+        elm.addEventListener('touchstart', touchStart);
+        elm.addEventListener('mousedown', touchStart);
+        elm.addEventListener('touchmove', touchMove);
 
         var p = document.createElement('div'), gcs, bg;
         p.className = 'pointer';
@@ -107,7 +121,7 @@ class SimplePicker {
         this.pointer[type +'-w'] = parseInt(p.style.width) / 2;
         this.pointer[type + '-h'] = parseInt(p.style.height) / 2;
 
-        gcs = getComputedStyle(elm, null);
+        gcs = getComputedStyle(canvas, null);
 
         this.pointer[type + '-wmax'] = parseInt(gcs.getPropertyValue("width"));
         this.pointer[type + '-hmax'] = parseInt(gcs.getPropertyValue("height"));
@@ -131,6 +145,17 @@ class SimplePicker {
 
         this.updateHSL();
         this.updatePreview();
+    }
+
+    setColor(color: MV.Color, g = null, b = null) {
+        if (!(color instanceof MV.Color))
+            color = new MV.Color(color, g, b);
+
+        this.setRGB(color.red(), color.green(), color.blue());
+    }
+
+    getColor() {
+        return new MV.Color(this.rgb);
     }
 
 	setRGB(red, green, blue) {
@@ -162,21 +187,20 @@ class SimplePicker {
 	}
 
 	draw() {
-		this.drawSlider();
-		this.drawColorPicker();
+		this.drawSlider(); // initialize only? remove draw()?
+		this.update();
+	}
 
-        // Update pointer pos.. to match color
+	update() {
+	    this.drawColorPicker();
+
 	    this.updatePointerFromColor(this.hsl);
-		this._updateControls();
+	    this.updatePreview();
+	    this.control.update();
 	}
 
 	updatePreview() {
-	    this.preview.style.backgroundColor = this.hex;
-	}
-
-	_updateControls() {
-	    this.control.update();
-	    this.updatePreview();
+	    this.preview.style.backgroundColor = '#'+this.hex;
 	}
 
 	drawSlider() {
@@ -217,7 +241,6 @@ class SimplePicker {
 		}
 	}
 
-    // not used:  but can update pointer(s) based on input of a color
 	updatePointerFromColor(hsl) {
 	   var x, y;
 
@@ -252,9 +275,16 @@ class SimplePicker {
 	        top = y;
 	    }
 
-	    if (top < 0 || left < 0 || top > this.pointer[type + '-hmax'] || left > this.pointer[type + '-wmax']) {
-	        return;
-	    }
+        /* Clip position around container */ 
+	    if (left < 0)
+	        left = 0;
+	    if (top < 0)
+	        top = 0;
+	    if (top > this.pointer[type + '-hmax'])
+	        top = this.pointer[type + '-hmax'];
+	    if (left > this.pointer[type + '-wmax'])
+	        left = this.pointer[type + '-wmax'];
+
 	    mw = this.pointer[type + '-w'];
 	    mh = this.pointer[type + '-h'];
 
@@ -273,7 +303,9 @@ class SimplePicker {
 	        this.pointer.hsl.luminance = this.hsl.luminance + adjust;
 
 	        p.style.backgroundColor = '#' + MV.color.Conversion.hslToHex(this.pointer.hsl);
-	    }
+        }
+
+        return true;
 	}
 }
 
@@ -382,31 +414,29 @@ class SimplePickerControls {
     }
 
 }
-class dom {
 
-    static getMouseCoordinates(elm, posx, posy) {
-        var totalOffsetX = 0;
-        var totalOffsetY = 0;
-        var canvasX = 0;
-        var canvasY = 0;
+module dom {
 
-        do {
-            totalOffsetX += elm.offsetLeft + elm.clientLeft;
-            totalOffsetY += elm.offsetTop + elm.clientTop;
+    export class event {
+
+        /** Get the coordinates of a touch or click event relative to a containing element */
+        static getRelativeCoords(evt, container) {
+            var rect = container.getBoundingClientRect(); // optimize this? store coords?
+            if (evt.changedTouches) {
+                var idx = evt.changedTouches.length - 1;
+
+                return {
+                    x: evt.changedTouches[idx].clientX - rect.left,
+                    y: evt.changedTouches[idx].clientY - rect.top
+                };
+            } else {
+                return {
+                    x: evt.clientX - rect.left,
+                    y: evt.clientY - rect.top
+                };
+            }
+
+
         }
-        while (elm = elm.offsetParent);
-
-        canvasX = posx - totalOffsetX;
-        canvasY = posy - totalOffsetY;
-
-        return { x: canvasX, y: canvasY }
-    }
-
-    static getMousePos(canvas, evt) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-            x: evt.clientX - rect.left,
-            y: evt.clientY - rect.top
-        };
     }
 }

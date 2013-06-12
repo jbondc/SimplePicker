@@ -15,7 +15,6 @@ var SimplePicker = (function () {
         };
         this._createContainer(this.picker, "P");
         this._createContainer(this.slider, "S");
-        this.setRGB(255, 0, 0);
         this.control = new SimplePickerControls(this);
     }
     SimplePicker.prototype._createContainer = function (canvas, type) {
@@ -25,39 +24,51 @@ var SimplePicker = (function () {
         elm.className = 'spContainer ' + className;
         canvas.parentNode.replaceChild(elm, canvas);
         elm.appendChild(canvas);
-        elm.onmousedown = function (evt) {
-            _this.pointer.type = type;
-            evt.preventDefault();
-        };
-        elm.onmouseup = function (evt) {
+        var touchMove = function (evt) {
             if(_this.pointer.type !== type) {
                 return;
             }
             if(type === 'P') {
-                var pos = dom.getMousePos(_this.picker, evt);
+                var pos = dom.event.getRelativeCoords(evt, _this.picker);
             } else {
-                var pos = dom.getMousePos(_this.slider, evt);
+                var pos = dom.event.getRelativeCoords(evt, _this.slider);
+            }
+            _this.updateFromPointer(pos.x, pos.y);
+            _this._updatePointer(type, pos.x, pos.y);
+        };
+        var touchend = function (evt) {
+            window.removeEventListener('mousemove', touchMove);
+            window.removeEventListener('touchend', touchend);
+            window.removeEventListener('mouseup', touchend);
+            if(_this.pointer.type !== type) {
+                _this.pointer.type = null;
+                return;
+            }
+            if(type === 'P') {
+                var pos = dom.event.getRelativeCoords(evt, _this.picker);
+            } else {
+                var pos = dom.event.getRelativeCoords(evt, _this.slider);
             }
             _this.updateFromPointer(pos.x, pos.y);
             _this.pointer.type = null;
-            _this._updateControls();
+            _this.updatePreview();
+            _this.control.update();
             _this._updatePointer(type, pos.x, pos.y);
             if(type === 'S') {
                 _this.drawColorPicker();
             }
+            evt.preventDefault();
         };
-        elm.addEventListener('mousemove', function (evt) {
-            if(_this.pointer.type !== type) {
-                return;
-            }
-            if(type === 'P') {
-                var pos = dom.getMousePos(_this.picker, evt);
-            } else {
-                var pos = dom.getMousePos(_this.slider, evt);
-            }
-            _this.updateFromPointer(pos.x, pos.y);
-            _this._updatePointer(type, pos.x, pos.y);
-        }, false);
+        var touchStart = function (evt) {
+            _this.pointer.type = type;
+            window.addEventListener('touchend', touchend);
+            window.addEventListener('mouseup', touchend);
+            window.addEventListener('mousemove', touchMove);
+            evt.preventDefault();
+        };
+        elm.addEventListener('touchstart', touchStart);
+        elm.addEventListener('mousedown', touchStart);
+        elm.addEventListener('touchmove', touchMove);
         var p = document.createElement('div'), gcs, bg;
         p.className = 'pointer';
         elm.appendChild(p);
@@ -73,7 +84,7 @@ var SimplePicker = (function () {
         p.style.height = gcs.getPropertyValue("height");
         this.pointer[type + '-w'] = parseInt(p.style.width) / 2;
         this.pointer[type + '-h'] = parseInt(p.style.height) / 2;
-        gcs = getComputedStyle(elm, null);
+        gcs = getComputedStyle(canvas, null);
         this.pointer[type + '-wmax'] = parseInt(gcs.getPropertyValue("width"));
         this.pointer[type + '-hmax'] = parseInt(gcs.getPropertyValue("height"));
         this.pointer[type] = p;
@@ -91,6 +102,17 @@ var SimplePicker = (function () {
         }
         this.updateHSL();
         this.updatePreview();
+    };
+    SimplePicker.prototype.setColor = function (color, g, b) {
+        if (typeof g === "undefined") { g = null; }
+        if (typeof b === "undefined") { b = null; }
+        if(!(color instanceof MV.Color)) {
+            color = new MV.Color(color, g, b);
+        }
+        this.setRGB(color.red(), color.green(), color.blue());
+    };
+    SimplePicker.prototype.getColor = function () {
+        return new MV.Color(this.rgb);
     };
     SimplePicker.prototype.setRGB = function (red, green, blue) {
         this.rgb.red = red;
@@ -116,16 +138,16 @@ var SimplePicker = (function () {
     };
     SimplePicker.prototype.draw = function () {
         this.drawSlider();
+        this.update();
+    };
+    SimplePicker.prototype.update = function () {
         this.drawColorPicker();
         this.updatePointerFromColor(this.hsl);
-        this._updateControls();
+        this.updatePreview();
+        this.control.update();
     };
     SimplePicker.prototype.updatePreview = function () {
-        this.preview.style.backgroundColor = this.hex;
-    };
-    SimplePicker.prototype._updateControls = function () {
-        this.control.update();
-        this.updatePreview();
+        this.preview.style.backgroundColor = '#' + this.hex;
     };
     SimplePicker.prototype.drawSlider = function () {
         var hueContext = this.slider.getContext('2d');
@@ -191,8 +213,17 @@ var SimplePicker = (function () {
             left = x;
             top = y;
         }
-        if(top < 0 || left < 0 || top > this.pointer[type + '-hmax'] || left > this.pointer[type + '-wmax']) {
-            return;
+        if(left < 0) {
+            left = 0;
+        }
+        if(top < 0) {
+            top = 0;
+        }
+        if(top > this.pointer[type + '-hmax']) {
+            top = this.pointer[type + '-hmax'];
+        }
+        if(left > this.pointer[type + '-wmax']) {
+            left = this.pointer[type + '-wmax'];
         }
         mw = this.pointer[type + '-w'];
         mh = this.pointer[type + '-h'];
@@ -208,6 +239,7 @@ var SimplePicker = (function () {
             this.pointer.hsl.luminance = this.hsl.luminance + adjust;
             p.style.backgroundColor = '#' + MV.color.Conversion.hslToHex(this.pointer.hsl);
         }
+        return true;
     };
     return SimplePicker;
 })();
@@ -312,30 +344,26 @@ var SimplePickerControls = (function () {
     };
     return SimplePickerControls;
 })();
-var dom = (function () {
-    function dom() { }
-    dom.getMouseCoordinates = function getMouseCoordinates(elm, posx, posy) {
-        var totalOffsetX = 0;
-        var totalOffsetY = 0;
-        var canvasX = 0;
-        var canvasY = 0;
-        do {
-            totalOffsetX += elm.offsetLeft + elm.clientLeft;
-            totalOffsetY += elm.offsetTop + elm.clientTop;
-        }while(elm = elm.offsetParent);
-        canvasX = posx - totalOffsetX;
-        canvasY = posy - totalOffsetY;
-        return {
-            x: canvasX,
-            y: canvasY
+var dom;
+(function (dom) {
+    var event = (function () {
+        function event() { }
+        event.getRelativeCoords = function getRelativeCoords(evt, container) {
+            var rect = container.getBoundingClientRect();
+            if(evt.changedTouches) {
+                var idx = evt.changedTouches.length - 1;
+                return {
+                    x: evt.changedTouches[idx].clientX - rect.left,
+                    y: evt.changedTouches[idx].clientY - rect.top
+                };
+            } else {
+                return {
+                    x: evt.clientX - rect.left,
+                    y: evt.clientY - rect.top
+                };
+            }
         };
-    };
-    dom.getMousePos = function getMousePos(canvas, evt) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-            x: evt.clientX - rect.left,
-            y: evt.clientY - rect.top
-        };
-    };
-    return dom;
-})();
+        return event;
+    })();
+    dom.event = event;    
+})(dom || (dom = {}));

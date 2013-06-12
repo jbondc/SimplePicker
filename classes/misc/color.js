@@ -3,12 +3,12 @@ var MV;
     var Color = (function () {
         function Color(r, g, b) {
             if (typeof r === "undefined") { r = 0; }
-            if (typeof g === "undefined") { g = 0; }
-            if (typeof b === "undefined") { b = 0; }
-            if(typeof r === 'String' && r.length && g == null) {
+            if (typeof g === "undefined") { g = null; }
+            if (typeof b === "undefined") { b = null; }
+            if(typeof r === 'string' && r.length && g == null) {
                 r = r.trim();
                 if(r[0] === '#' || !isNaN(parseInt(r))) {
-                    this._rgb = MV.color.Conversion.hexToRgb(r);
+                    this._rgb = MV.color.Conversion.hexToRgb(r.substr(0, 7));
                 } else {
                     this._rgb = MV.color.Conversion.textToRgb(r, 'en');
                 }
@@ -62,7 +62,7 @@ var MV;
                 this.red = 0;
                 this.green = 0;
                 this.blue = 0;
-                if(typeof r === 'Array') {
+                if(typeof r === 'array') {
                     r = r[0];
                     g = r[1];
                     b = r[2];
@@ -112,7 +112,7 @@ var MV;
                 this.hue = 0;
                 this.saturation = 0;
                 this.luminance = 0;
-                if(typeof h === 'Array' && h.length === 3) {
+                if(typeof h === 'array' && h.length === 3) {
                     s = h[1];
                     l = h[2];
                     h = h[0];

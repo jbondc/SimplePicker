@@ -20,11 +20,12 @@ module MV {
 
         _rgb: color.RGB;
 
-        constructor(r: any = 0, g = 0, b = 0) {
-            if (typeof r === 'String' && r.length && g == null) {
+        constructor(r: any = 0, g = null, b = null) {
+            if (typeof r === 'string' && r.length && g == null) {
                 r = r.trim();
+
                 if (r[0] === '#' || !isNaN(parseInt(r)))
-                    this._rgb = color.Conversion.hexToRgb(r);
+                    this._rgb = color.Conversion.hexToRgb(r.substr(0, 7));
                 else
                     this._rgb = color.Conversion.textToRgb(r, 'en');
             } else {
@@ -82,7 +83,7 @@ module MV.color {
         blue: number = 0;
 
         constructor(r:any = 0, g = 0, b = 0) {
-            if (typeof r === 'Array') {
+            if (typeof r === 'array') {
                 r = r[0];
                 g = r[1];
                 b = r[2];
@@ -126,7 +127,7 @@ module MV.color {
         luminance: number = 0;
 
         constructor(h:any = 0, s = 0, l = 0) {
-            if (typeof h === 'Array' && h.length === 3) {
+            if (typeof h === 'array' && h.length === 3) {
                 s = h[1];
                 l = h[2];
                 h = h[0];
