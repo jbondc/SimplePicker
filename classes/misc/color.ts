@@ -128,8 +128,8 @@ module MV.color {
 
 		constructor(h:any = 0, s = 0, l = 0) {
 			if (typeof h === 'array' && h.length === 3) {
-				s = h[1];
 				l = h[2];
+				s = h[1];
 				h = h[0];
 			}
 
@@ -187,6 +187,29 @@ module MV.color {
 
 		toString() {
 			return "HSL(" + this.hue + "," + this.saturation + "," + this.luminance + ")";
+		}
+	}
+
+	export class XYZ {
+
+		x: number = 0;
+		y: number = 0;
+		z: number = 0;
+
+		constructor(x: any = 0, y = 0, z = 0) {
+			if (typeof x === 'array' && x.length === 3) {
+				z = x[2];
+				y = x[1];
+				x = x[0];
+			}
+
+			this.x = Number(x);
+			this.y = Number(y);
+			this.z = Number(z);
+		}
+
+		toString() {
+			return "XYZ(" + this.x + "," + this.y + "," + this.z + ")";
 		}
 	}
 
@@ -277,6 +300,57 @@ module MV.color {
 			return rgbToHex(arr[0], arr[1], arr[2]);
 		}
 
+		static rgbToXYZ(r, g = null, b = null) {
+			if (!(r instanceof color.RGB))
+				r = new color.RGB(r, g, b);
+
+			var R = (r.red / 255);
+			var G = (r.green / 255);
+			var B = (r.blue / 255);
+
+			if (R > 0.04045)
+				R = ((R + 0.055) / 1.055) ^ 2.4;
+			else
+				R = R / 12.92;
+
+			if (G > 0.04045)
+				G = ((G + 0.055) / 1.055) ^ 2.4;
+			else
+				G = G / 12.92;
+
+			if (B > 0.04045)
+				B = ((B + 0.055) / 1.055) ^ 2.4;
+			else
+				B = B / 12.92;
+
+			R *= 100;
+			G *= 100;
+			B *= 100;
+
+			return new color.XYZ(
+				R * 0.4124 + G * 0.3576 + B * 0.1805,
+				R * 0.2126 + G * 0.7152 + B * 0.0722,
+				R * 0.0193 + G * 0.1192 + B * 0.9505
+			);
+		}
+
+		/*
+		static xyzToCIE(x, y = null, z = null) {
+var_X = X / ref_X          //ref_X =  95.047   Observer= 2°, Illuminant= D65
+var_Y = Y / ref_Y          //ref_Y = 100.000
+var_Z = Z / ref_Z          //ref_Z = 108.883
+
+if ( var_X > 0.008856 ) var_X = var_X ^ ( 1/3 )
+else                    var_X = ( 7.787 * var_X ) + ( 16 / 116 )
+if ( var_Y > 0.008856 ) var_Y = var_Y ^ ( 1/3 )
+else                    var_Y = ( 7.787 * var_Y ) + ( 16 / 116 )
+if ( var_Z > 0.008856 ) var_Z = var_Z ^ ( 1/3 )
+else                    var_Z = ( 7.787 * var_Z ) + ( 16 / 116 )
+
+CIE-L* = ( 116 * var_Y ) - 16
+CIE-a* = 500 * ( var_X - var_Y )
+CIE-b* = 200 * ( var_Y - var_Z )
+	*/
 		static _hslRgb(h, s = null, l = null) {
 			if (!(h instanceof color.HSL))
 				h = new color.HSL(h, s, l);

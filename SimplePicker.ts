@@ -14,7 +14,8 @@ class SimplePicker {
 
 	rgb: MV.color.RGB;
 	hsl: MV.color.HSL;
-	hex: string;
+	hex = '';
+	_oldHex = '';
 
 	verticalHue: bool;
 	pointer: any;
@@ -34,7 +35,7 @@ class SimplePicker {
 
 		this.rgb = new MV.color.RGB;
 		this.hsl = new MV.color.HSL;
-		this.pointer = { type: null };
+		this.pointer = { type: null, adjust: {prop: false, lum: 0} };
 
 		this._createContainer(this.picker, "P");
 		this._createContainer(this.slider, "S");
@@ -109,7 +110,21 @@ class SimplePicker {
 		if (type == 'P') {
 			gcs = getComputedStyle(p, null);
 			bg = gcs.getPropertyValue("background-color");
+
+			// Update background-color or border, unless forced transparency
+			// TODO: be smarter about this? Other options? Both?
+			this.pointer.adjust.prop = 'bg';
+			if (bg === "transparent" || bg.substr(0, 4) == 'rgba') {
+				bg = gcs.getPropertyValue("border-color");
+				this.pointer.adjust.prop = 'br';
+				p.style.borderColor = bg;
+			} else {
+				p.style.backgroundColor = bg;
+			}
+
 			this.pointer.hsl = MV.color.Conversion.hexToHsl(bg);
+			this.pointer.adjust.lum = this.pointer.hsl.luminance;
+
 		} else {
 			elm.className += this.verticalHue ? ' vertical' : ' horizontal';
 			gcs = getComputedStyle(p, null);
@@ -123,8 +138,12 @@ class SimplePicker {
 
 		gcs = getComputedStyle(canvas, null);
 
-		this.pointer[type + '-wmax'] = parseInt(gcs.getPropertyValue("width"));
-		this.pointer[type + '-hmax'] = parseInt(gcs.getPropertyValue("height"));
+		// Set container dimensions to match canvas
+		elm.style.width = gcs.getPropertyValue("width");
+		elm.style.height = gcs.getPropertyValue("height");
+
+		this.pointer[type + '-wmax'] = parseInt(elm.style.width);
+		this.pointer[type + '-hmax'] = parseInt(elm.style.height);
 
 		this.pointer[type] = p;
 	}
@@ -169,6 +188,7 @@ class SimplePicker {
 	updateRGB() {
 		this.rgb.validate();
 		this.hsl = MV.color.Conversion.rgbToHsl(this.rgb);
+		this._oldHex = this.hex;
 		this.hex = this.rgb.toColor().toHex();
 	}
 
@@ -183,6 +203,7 @@ class SimplePicker {
 	updateHSL() {
 		this.hsl.validate();
 		this.rgb = MV.color.Conversion.hslToColor(this.hsl).toRGB();
+		this._oldHex = this.hex;
 		this.hex = this.rgb.toColor().toHex();
 	}
 
@@ -290,19 +311,38 @@ class SimplePicker {
 
 		p.style.top = (top - mh) + 'px';
 		p.style.left = (left - mw) + 'px';
+		
+		if (this.hex === this._oldHex) {
+			return;
+		}
 
-		if (type === 'P') {
+		if (type === 'P' && this.pointer.adjust.prop) {
 			var lum, sat, hue, diff, adjust;
 
 			// Make pointer visible on dark/light background
-			diff = Math.abs(this.pointer.hsl.luminance - this.hsl.luminance);
-			if (diff > 35) // difference high enough?
+			diff = this.pointer.hsl.luminance - this.hsl.luminance;
+			if (Math.abs(diff) > 35) // difference high enough?
 			   return;
 
-			adjust = (this.hsl.luminance > 50 ? -30 : 30);
-			this.pointer.hsl.luminance = this.hsl.luminance + adjust;
+			//console.log(this.pointer.adjust);
+			if (diff < 0)
+				adjust = Math.min(this.pointer.adjust.lum + 70, 100);
+			else
+				adjust = Math.max(this.pointer.adjust.lum - 70, 0);
 
-			p.style.backgroundColor = '#' + MV.color.Conversion.hslToHex(this.pointer.hsl);
+			this.pointer.hsl.luminance = adjust;
+
+			//console.log("ADJUST AMOUNT " + adjust);
+
+			adjust = '#' + MV.color.Conversion.hslToHex(this.pointer.hsl);
+
+			//console.log("ADJUST COLOR " + adjust);
+
+			if(this.pointer.adjust.prop === 'bg')
+				p.style.backgroundColor = adjust;
+			else {
+				p.style.borderColor = adjust;
+			}	
 		}
 
 		return true;

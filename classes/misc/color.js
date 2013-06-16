@@ -113,8 +113,8 @@ var MV;
                 this.saturation = 0;
                 this.luminance = 0;
                 if(typeof h === 'array' && h.length === 3) {
-                    s = h[1];
                     l = h[2];
+                    s = h[1];
                     h = h[0];
                 }
                 this.hue = Number(h);
@@ -180,6 +180,29 @@ var MV;
             return HSL;
         })();
         color.HSL = HSL;        
+        var XYZ = (function () {
+            function XYZ(x, y, z) {
+                if (typeof x === "undefined") { x = 0; }
+                if (typeof y === "undefined") { y = 0; }
+                if (typeof z === "undefined") { z = 0; }
+                this.x = 0;
+                this.y = 0;
+                this.z = 0;
+                if(typeof x === 'array' && x.length === 3) {
+                    z = x[2];
+                    y = x[1];
+                    x = x[0];
+                }
+                this.x = Number(x);
+                this.y = Number(y);
+                this.z = Number(z);
+            }
+            XYZ.prototype.toString = function () {
+                return "XYZ(" + this.x + "," + this.y + "," + this.z + ")";
+            };
+            return XYZ;
+        })();
+        color.XYZ = XYZ;        
         var Conversion = (function () {
             function Conversion() { }
             Conversion.textToRgb = function textToRgb(r, culture) {
@@ -286,6 +309,35 @@ var MV;
                 if (typeof l === "undefined") { l = null; }
                 var arr = Conversion._hslRgb(h, s, l);
                 return Conversion.rgbToHex(arr[0], arr[1], arr[2]);
+            };
+            Conversion.rgbToXYZ = function rgbToXYZ(r, g, b) {
+                if (typeof g === "undefined") { g = null; }
+                if (typeof b === "undefined") { b = null; }
+                if(!(r instanceof color.RGB)) {
+                    r = new color.RGB(r, g, b);
+                }
+                var R = (r.red / 255);
+                var G = (r.green / 255);
+                var B = (r.blue / 255);
+                if(R > 0.04045) {
+                    R = ((R + 0.055) / 1.055) ^ 2.4;
+                } else {
+                    R = R / 12.92;
+                }
+                if(G > 0.04045) {
+                    G = ((G + 0.055) / 1.055) ^ 2.4;
+                } else {
+                    G = G / 12.92;
+                }
+                if(B > 0.04045) {
+                    B = ((B + 0.055) / 1.055) ^ 2.4;
+                } else {
+                    B = B / 12.92;
+                }
+                R *= 100;
+                G *= 100;
+                B *= 100;
+                return new color.XYZ(R * 0.4124 + G * 0.3576 + B * 0.1805, R * 0.2126 + G * 0.7152 + B * 0.0722, R * 0.0193 + G * 0.1192 + B * 0.9505);
             };
             Conversion._hslRgb = function _hslRgb(h, s, l) {
                 if (typeof s === "undefined") { s = null; }

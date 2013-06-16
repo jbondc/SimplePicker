@@ -130,11 +130,12 @@ h1 {
 }
 
 .styled .spColor .pointer {
-	background-color: transparent !important;
+	background-color: rgba(255, 255, 255, 0.15) !important;
 	width:26px;
 	height:26px;
 	border-radius: 15px;
-	border:5px dotted #00FF00;
+	border:3px solid;
+	border-color: rgb(127, 13, 13) !important;
 	box-sizing: border-box;
 }
 
